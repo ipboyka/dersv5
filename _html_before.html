@@ -1,0 +1,2267 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ders Planlayıcı</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+
+    <div id="mainPageLoader" class="page-loader">
+        <div class="loader-content">
+            <div class="logo-icon loader-logo">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <h2 class="loader-title">Ders Planlayıcı</h2>
+            <div class="spinner"></div>
+            <p class="loader-text">Verileriniz senkronize ediliyor...</p>
+        </div>
+    </div>
+
+    <div class="transition-loader" id="transitionLoader">
+        <div class="loader-content">
+            <div class="logo-icon loader-logo">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <h2 class="loader-title">Ders Planlayıcı</h2>
+            <div class="spinner"></div>
+            <p class="loader-text">Ana menüye dönülüyor...</p>
+        </div>
+    </div>
+
+    <div class="ad-space-left">
+        <i class="fa-solid fa-rectangle-ad" style="font-size: 28px; margin-bottom: 12px; color: #dee2e6;"></i>
+        REKLAM<br>ALANI
+        <span style="font-size: 11px; margin-top: 8px; font-weight: 600; color: #ced4da;">160x600</span>
+    </div>
+
+    <div class="ad-space-right">
+        <i class="fa-solid fa-rectangle-ad" style="font-size: 28px; margin-bottom: 12px; color: #dee2e6;"></i>
+        REKLAM<br>ALANI
+        <span style="font-size: 11px; margin-top: 8px; font-weight: 600; color: #ced4da;">160x600</span>
+    </div>
+
+    <header class="header">
+        
+        <div class="countdown-container">
+            <div class="countdown-header">
+                <i class="fa-solid fa-hourglass-half countdown-icon"></i>
+                <span class="countdown-title">YKS 2026</span>
+            </div>
+            <div class="countdown-timer" id="yks-timer">
+                Hesaplanıyor...
+            </div>
+        </div>
+
+        <div class="logo-container" onclick="window.location.href='ders.html'">
+            <div class="logo-icon">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <h1 class="logo-text">Ders Planlayıcı</h1>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div id="headerAuthContainer" style="display: flex; align-items: center; gap: 10px;"></div>
+            
+            <button class="menu-btn" title="Menü">
+                <span class="menu-text">Menü</span>
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+    </header>
+
+    <section class="middle-section" id="dynamicMiddleSection">
+        
+        <div class="widget-box dashboard-widget" style="display: flex; flex-direction: column;">
+            <div class="widget-header notes-header">
+                <div class="header-left">
+                    <i class="fa-solid fa-chart-line widget-icon"></i>
+                    <h2 class="widget-title">Denemelerim</h2>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="add-note-btn" id="openExpandedExamsBtn" data-custom-title="Detaylı Analizleri Gör" style="background-color: var(--color-bg-hover); color: var(--color-primary); border: 1px solid var(--color-primary-border);">
+                        <i class="fa-solid fa-expand"></i>
+                    </button>
+                    <button class="add-note-btn" id="openExamModalBtn" data-custom-title="Yeni Deneme Ekle">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="exams-widget-content">
+                <div class="exam-list-section">
+                    <h3 class="exam-list-title">TYT Denemeleri</h3>
+                    <div id="tyt-exam-list" class="exam-mini-list">
+                        <div class="placeholder-text" style="font-size:12px; margin-top:5px;">Henüz TYT denemesi eklemedin...</div>
+                    </div>
+                </div>
+                
+                <div class="exam-list-section">
+                    <h3 class="exam-list-title">AYT Denemeleri</h3>
+                    <div id="ayt-exam-list" class="exam-mini-list">
+                        <div class="placeholder-text" style="font-size:12px; margin-top:5px;">Henüz AYT denemesi eklemedin...</div>
+                    </div>
+                </div>
+
+                <div class="exam-chart-container">
+                    <div class="chart-header">
+                        <span style="font-size: 12px; font-weight: 800; color: var(--color-text-secondary);"><i class="fa-solid fa-chart-area"></i> Gelişim Grafiği</span>
+                        <div class="chart-toggles">
+                            <button class="chart-toggle-btn active" data-chart="tyt">TYT</button>
+                            <button class="chart-toggle-btn" data-chart="ayt">AYT</button>
+                        </div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="netChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="drag-resizer" id="resizer1">
+            <button class="resizer-reset-btn" id="resetLeftBtn" data-custom-title="Düzeni sıfırla">
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+        </div>
+
+        <div class="widget-box dashboard-widget schedule-widget">
+            <div class="widget-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 6px; min-width: 0; position: relative;">
+                    <i class="fa-solid fa-calendar-day widget-icon" id="dashCalIconBtn" style="flex-shrink: 0; cursor: pointer;" data-custom-title="Gün Seç"></i>
+
+                    <!-- Mini Takvim Balonu -->
+                    <div id="dashMiniCalPopup" style="display:none; position:absolute; top:calc(100% + 10px); left:0; z-index:500; background:var(--color-bg-card); border:1px solid var(--color-border-medium); border-radius:var(--radius-lg); box-shadow:var(--shadow-modal); padding:12px; width:230px; animation: slideUp 0.2s ease;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <button id="dashMiniCalPrev" style="background:none; border:none; color:var(--color-primary); cursor:pointer; font-size:13px; padding:2px 6px;"><i class="fa-solid fa-chevron-left"></i></button>
+                            <span id="dashMiniCalTitle" style="font-size:13px; font-weight:800; color:var(--color-text-main);"></span>
+                            <button id="dashMiniCalNext" style="background:none; border:none; color:var(--color-primary); cursor:pointer; font-size:13px; padding:2px 6px;"><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                        <div style="display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:9px; font-weight:700; color:var(--color-text-muted); margin-bottom:4px;">
+                            <span>Pt</span><span>Sa</span><span>Ça</span><span>Pe</span><span>Cu</span><span>Ct</span><span>Pz</span>
+                        </div>
+                        <div id="dashMiniCalGrid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px;"></div>
+                        <div style="margin-top:8px; border-top:1px solid var(--color-border); padding-top:8px; text-align:center;">
+                            <button id="dashMiniCalTodayBtn" style="background:var(--color-primary); color:white; border:none; border-radius:var(--radius-md); padding:5px 16px; font-size:11px; font-weight:800; cursor:pointer;">Bugün</button>
+                        </div>
+                    </div>
+
+                    <h2 class="widget-title" id="dashboardScheduleTitle" style="white-space: nowrap;">Bugünün Programı</h2>
+                    <button id="prevDashDayBtn" style="flex-shrink: 0; background: var(--color-bg-hover); color: var(--color-primary); border: none; width: 24px; height: 24px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#cce5ff'" onmouseout="this.style.backgroundColor='#e6f2ff'" data-custom-title="Önceki Gün"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button id="nextDashDayBtn" style="flex-shrink: 0; background: var(--color-bg-hover); color: var(--color-primary); border: none; width: 24px; height: 24px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#cce5ff'" onmouseout="this.style.backgroundColor='#e6f2ff'" data-custom-title="Sonraki Gün"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button id="resetDashDayBtn" style="flex-shrink: 0; background: var(--color-bg-hover); color: var(--color-primary); border: none; width: 24px; height: 24px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#cce5ff'" onmouseout="this.style.backgroundColor='#e6f2ff'" data-custom-title="Bugüne Dön"><i class="fa-solid fa-rotate-left" style="font-size:11px;"></i></button>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+    
+                    <button id="openDashPlaylistBtn" data-custom-title="Günün Playlistlerini İzle" style="padding: 6px 12px; display: flex; align-items: center; gap: 6px; border-radius: var(--radius-md); border: 1px solid #ff4444; background: #fff0f0; color: #ff4444; cursor: pointer; font-size: 12px; font-weight: 800; transition: var(--transition-fast); box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onmouseover="this.style.background='#ff4444';this.style.color='white';" onmouseout="this.style.background='#fff0f0';this.style.color='#ff4444';">
+                        <i class="fa-brands fa-youtube" style="font-size: 14px;"></i> Playlistler
+                    </button>
+
+                    <button id="openWeeklyPlannerBtn" data-custom-title="Geniş Ekran Haftalık Planlayıcı" style="background-color: var(--color-bg-hover); color: var(--color-primary); border: none; padding: 6px 12px; border-radius: var(--radius-md); font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 12px; transition: var(--transition-fast); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <i class="fa-solid fa-table-list"></i> Tüm Hafta
+                    </button>
+
+                </div>
+            </div>
+            
+            <div class="today-tabs">
+                <button class="today-tab-btn active" data-tab="kalanlar">Kalanlar</button>
+                <button class="today-tab-btn" data-tab="tamamlananlar">Tamamlananlar</button>
+            </div>
+
+            <div class="today-tasks-list" id="todayTasksList">
+                <div class="placeholder-text">Bugünün programı yükleniyor...</div>
+            </div>
+            
+            <div class="daily-total-time" id="todayTotalTime" style="border-radius: var(--radius-md); margin-top: auto; flex-shrink: 0;">
+                <i class="fa-solid fa-stopwatch" class="icon-primary"></i> Bugün Toplam: 0 Dk
+            </div>
+        </div>
+
+        <div class="drag-resizer" id="resizer2">
+            <button class="resizer-reset-btn" id="resetRightBtn" data-custom-title="Düzeni sıfırla">
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+        </div>
+
+        <div class="widget-box dashboard-widget notes-widget">
+            <div class="widget-header notes-header">
+                <div class="header-left">
+                    <i class="fa-solid fa-pen-to-square widget-icon"></i>
+                    <h2 class="widget-title">Notlarım</h2>
+                </div>
+                <button class="add-note-btn" id="openNoteModalBtn" data-custom-title="Yeni Not Ekle">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+            <div class="notes-content" id="notes-list">
+                <div class="placeholder-text">Henüz not eklemedin...</div>
+            </div>
+        </div>
+
+    </section>
+
+    <main class="main-content" id="mainContent">
+        <div id="leftWidgetContainer"></div>
+        <div id="rightWidgetContainer"></div>
+    </main>
+
+    <!-- WIDGET'LAR — body'de gizli tutulur, JS appendChild ile container'a taşınır -->
+    <!-- Not: appendChild ile taşınan node önceki parent'tan otomatik çıkar. innerHTML kullanılmaz. -->
+
+    <div id="widget-calendar" class="widget-box calendar-widget" style="display:none; height:100%; min-height:0;">
+        <div id="calMainHeader" style="position: relative; display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 15px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button class="cal-btn" id="calPrevMonthBtn" data-custom-title="Önceki Ay"><i class="fa-solid fa-chevron-left"></i></button>
+                <h2 id="month-year" style="margin: 0; min-width: 85px; text-align: center;">Yükleniyor...</h2>
+                <button class="cal-btn" id="calNextMonthBtn" data-custom-title="Sonraki Ay"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+            <button id="calSettingsBtn" style="position: absolute; right: 0; background: none; border: none; color: var(--color-text-light); cursor: pointer; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text-light)'" data-custom-title="Takvim Ayarları">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </div>
+        <div id="calSummaryHeader" style="display:none; align-items:center; gap:8px; margin-bottom:12px; flex-shrink:0;">
+            <button id="calBackBtn" style="background:none; border:none; color:var(--color-primary); cursor:pointer; font-size:13px; font-weight:800; display:flex; align-items:center; gap:5px; padding:4px 8px; border-radius:var(--radius-sm); transition:background 0.15s;" onmouseover="this.style.background='var(--color-primary-light)'" onmouseout="this.style.background='none'">
+                <i class="fa-solid fa-arrow-left"></i> Takvim
+            </button>
+            <span id="calSummaryDate" style="font-size:13px; font-weight:800; color:var(--color-text-main);"></span>
+        </div>
+        <div id="calCalendarView" style="display:flex; flex-direction:column; gap:0; flex-shrink:0;">
+            <div class="calendar-weekdays">
+                <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
+            </div>
+            <div class="calendar-days" id="calendar-days"></div>
+            <div style="flex-shrink:0; height:12px;"></div>
+        </div>
+        <div id="calDaySummary"></div>
+    </div>
+
+    <div id="widget-subject" class="widget-box subject-widget" style="display:none; height:100%; min-height:0;">
+        <div class="subject-header">
+            <div class="custom-select" id="examTypeSelect">
+                <div class="select-selected" data-val="tyt">TYT <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></div>
+                <div class="select-items select-hide">
+                    <div data-val="tyt">TYT</div>
+                    <div data-val="ayt">AYT</div>
+                </div>
+            </div>
+            <h2 class="subject-title">Konu Çalışması</h2>
+            <div class="custom-select" id="trackSelect">
+                <div class="select-selected" data-val="sayisal">Sayısal <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></div>
+                <div class="select-items select-hide">
+                    <div data-val="sayisal">Sayısal</div>
+                    <div data-val="ea">Eşit Ağırlık</div>
+                    <div data-val="sozel">Sözel</div>
+                    <div data-val="dil">Dil</div>
+                </div>
+            </div>
+        </div>
+        <div class="subject-content" id="subject-container"></div>
+    </div>
+
+    <div id="widget-clock" class="widget-box" style="display:none; height:100%; min-height:0; flex-direction:column; overflow:hidden; position:relative; background: var(--color-bg-card);">
+
+        <div id="clkTopBar" style="display:flex; align-items:center; justify-content:space-between; padding:0px 8px 8px; margin-bottom: 12px; margin-left:-5px; margin-right:-5px; flex-shrink:0; position:relative; border-bottom: 1px solid rgba(0,0,0,0.05);">
+
+            <div style="position:relative;">
+                <button id="clkModeBtn" onclick="window.clkToggleModeBar()"
+                    style="display:flex; align-items:center; gap:6px; padding:4px 12px; border-radius: 50px;
+                           border:1px solid var(--color-border-medium); background:var(--color-bg-input);
+                           color:var(--color-text-secondary); font-size:11px; font-weight:800; cursor:pointer; transition:all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.02);"
+                    onmouseover="this.style.borderColor='var(--color-primary)';this.style.color='var(--color-primary)';this.style.boxShadow='0 4px 10px rgba(0,123,255,0.1)'"
+                    onmouseout="this.style.borderColor='var(--color-border-medium)';this.style.color='var(--color-text-secondary)';this.style.boxShadow='0 2px 5px rgba(0,0,0,0.02)'">
+                    <i class="fa-solid fa-sliders" style="font-size:11px; color:var(--color-primary);"></i>
+                    <span id="clkActiveLabel">Saat</span>
+                    <i id="clkModeCaret" class="fa-solid fa-chevron-down" style="font-size:9px; transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+                </button>
+
+                <div id="clkModeBar" style="display:none; position:absolute; top:calc(100% + 6px); left:0; z-index:500;
+                     background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:12px;
+                     box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding:4px; min-width:140px; flex-direction:column; gap:2px; transform-origin: top left; animation: scaleUp 0.2s ease;">
+                    <button class="clk-tab active" data-mode="clock" onclick="window.clkSetMode('clock')" style="padding: 8px 12px; border-radius: 8px; border: none; text-align: left; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; background: transparent; color: var(--color-text-secondary); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-regular fa-clock" style="font-size: 14px; width: 14px; color: var(--color-primary);"></i> Saat
+                    </button>
+                    <button class="clk-tab" data-mode="stopwatch" onclick="window.clkSetMode('stopwatch')" style="padding: 8px 12px; border-radius: 8px; border: none; text-align: left; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; background: transparent; color: var(--color-text-secondary); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-stopwatch" style="font-size: 14px; width: 14px; color: var(--color-primary);"></i> Kronometre
+                    </button>
+                    <button class="clk-tab" data-mode="timer" onclick="window.clkSetMode('timer')" style="padding: 8px 12px; border-radius: 8px; border: none; text-align: left; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; background: transparent; color: var(--color-text-secondary); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-hourglass-half" style="font-size: 14px; width: 14px; color: var(--color-primary);"></i> Zamanlayıcı
+                    </button>
+                </div>
+            </div>
+
+            <button onclick="window.clkOpenFullscreen()"
+                style="display:flex; align-items:center; justify-content:center; width:28px; height:28px;
+                       border-radius:50%; border:1px solid var(--color-border-medium);
+                       background:var(--color-bg-input); color:var(--color-text-secondary);
+                       cursor:pointer; transition:all 0.3s ease; font-size:12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);"
+                onmouseover="this.style.borderColor='var(--color-primary)';this.style.color='var(--color-primary)';this.style.background='var(--color-primary-lighter)';this.style.transform='scale(1.1)';"
+                onmouseout="this.style.borderColor='var(--color-border-medium)';this.style.color='var(--color-text-secondary)';this.style.background='var(--color-bg-input)';this.style.transform='scale(1)';"
+                title="Tam Ekran">
+                <i class="fa-solid fa-expand"></i>
+            </button>
+        </div>
+
+        <div id="clkFaceClock" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; min-height:0; padding:10px 10px 20px;">
+            <div style="position: relative; display: flex; align-items: flex-end;">
+                <div id="clkTime" style="font-size:clamp(48px, 7vw, 76px); font-weight:900; background: linear-gradient(135deg, var(--color-text-main) 0%, var(--color-text-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing:1px; font-variant-numeric:tabular-nums; line-height:1; drop-shadow: 0 4px 10px rgba(0,0,0,0.05);"></div>
+                <div id="clkSeconds" style="font-size:clamp(16px, 2.5vw, 24px); font-weight:800; color:var(--color-primary); letter-spacing:1px; font-variant-numeric:tabular-nums; margin-left: 5px; margin-bottom: 8px; text-shadow: 0 2px 5px rgba(0,123,255,0.2);"></div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; background: var(--color-bg-input); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--color-border);">
+                <div id="clkDate" style="font-size:14px; font-weight:800; color:var(--color-primary);"></div>
+                <div style="width: 5px; height: 5px; border-radius: 50%; background: var(--color-text-muted); opacity: 0.5;"></div>
+                <div id="clkDay" style="font-size:13px; font-weight:800; color:var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px;"></div>
+            </div>
+        </div>
+
+        <div id="clkFaceStopwatch" style="display:none; flex:1; flex-direction:column; align-items:center; justify-content:center; gap:15px; min-height:0; padding:10px 10px 20px;">
+            
+            <div id="swTaskLabel"></div>
+            <div id="swTaskTarget"></div>
+            
+            <div style="display:flex; align-items:baseline; justify-content:center; gap:8px; margin-bottom: 5px;">
+                <div id="swDisplay" style="font-size:clamp(36px, 5.5vw, 56px); font-weight:900; color:var(--color-text-main); letter-spacing:1px; font-variant-numeric:tabular-nums; line-height:1;">00:00.00</div>
+            </div>
+            
+            <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; align-items:center;">
+                <button id="swStartBtn" onclick="window.swToggle()"
+                    style="padding:10px 24px; border:none; border-radius:50px; background: linear-gradient(135deg, var(--color-success) 0%, #20c997 100%); color:#fff; font-size:14px; font-weight:800; cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); min-width:100px; box-shadow: 0 6px 15px rgba(40,167,69,0.3);"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(40,167,69,0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 15px rgba(40,167,69,0.3)';">
+                    <i class="fa-solid fa-play"></i> Başlat
+                </button>
+                <button id="swResetBtn" onclick="window.swReset()"
+                    style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; border:1px solid var(--color-border-strong); border-radius:50%; background:var(--color-bg-card); color:var(--color-text-secondary); font-size:14px; cursor:pointer; transition:all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05);"
+                    onmouseover="this.style.background='var(--color-bg-input)'; this.style.color='var(--color-text-main)'; this.style.transform='rotate(-30deg)';" onmouseout="this.style.background='var(--color-bg-card)'; this.style.color='var(--color-text-secondary)'; this.style.transform='rotate(0)';">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+                
+                <div id="swTaskPill" style="display:flex; align-items:center; background:var(--color-bg-card); border:2px solid var(--color-primary-border); border-radius:50px; padding:4px; box-shadow:0 4px 10px rgba(0,123,255,0.05); transition:all 0.3s; box-sizing:border-box;">
+                    <button id="swPickTaskBtn" onclick="window.clkPickTask('sw')"
+                        style="width:36px; height:36px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:var(--color-primary-lighter); color:var(--color-primary); font-size:14px; cursor:pointer; transition:all 0.2s; flex-shrink:0;"
+                        onmouseover="this.style.background='var(--color-primary)'; this.style.color='#fff'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='var(--color-primary-lighter)'; this.style.color='var(--color-primary)'; this.style.transform='scale(1)';" title="Görev Seç">
+                        <i class="fa-solid fa-list-check"></i>
+                    </button>
+                    
+                    <div id="swTaskActiveArea" style="display:none; align-items:center; gap:8px; padding-left:10px; padding-right:4px;">
+                        <span id="swPillLessonName" style="font-size:13px; font-weight:800; color:var(--color-text-main); white-space:nowrap;">Ders</span>
+                        
+                        <button id="swCompleteBtn" onclick="window.clkCompleteTask('sw')" style="display:none; padding:6px 12px; border:none; border-radius:50px; background:var(--color-success); color:#fff; font-size:12px; font-weight:800; cursor:pointer; transition:0.2s; align-items:center; gap:6px; box-shadow: 0 2px 5px rgba(40,167,69,0.3);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <i class="fa-solid fa-check"></i> Tamamla
+                        </button>
+                        
+                        <button id="swClearTaskBtn" onclick="window.clearActiveTask('sw')" style="width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:#dc3545; color:#fff; font-size:12px; cursor:pointer; transition:0.2s; box-shadow: 0 2px 5px rgba(220,53,69,0.3);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Görevi Kaldır">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="clkFaceTimer" style="display:none; flex:1; flex-direction:column; align-items:center; justify-content:center; gap:15px; min-height:0; padding:10px 10px 20px;">
+            
+            <div id="tmTaskLabel"></div>
+            
+            <div style="display:flex; align-items:center; justify-content:center; gap:12px; width:100%; margin-bottom: 5px;">
+                <div id="timerInputRow" style="display:flex; align-items:center; gap:8px;">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <input id="timerH" type="number" min="0" max="99" value="0"
+                                style="width:58px; height:58px; text-align:center; font-size:26px; font-weight:900; border:none; border-radius:16px; padding:0; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px transparent; transition: 0.2s;"
+                                onfocus="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px var(--color-primary)'" onblur="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px transparent'">
+                            <div style="display:flex; flex-direction:column; gap:2px;">
+                                <button class="tm-spin-btn" style="width:22px; height:28px;" onclick="window.adjTm('timerH', 1)"><i class="fa-solid fa-chevron-up" style="font-size:10px;"></i></button>
+                                <button class="tm-spin-btn" style="width:22px; height:28px;" onclick="window.adjTm('timerH', -1)"><i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></button>
+                            </div>
+                        </div>
+                        <span style="font-size:10px; font-weight:800; color:var(--color-text-muted); letter-spacing: 0.5px;">SAAT</span>
+                    </div>
+                    
+                    <div style="font-size:28px; font-weight:900; color:var(--color-border-strong); margin-bottom: 20px;">:</div>
+                    
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <input id="timerM" type="number" min="0" max="59" value="0"
+                                style="width:58px; height:58px; text-align:center; font-size:26px; font-weight:900; border:none; border-radius:16px; padding:0; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px transparent; transition: 0.2s;"
+                                onfocus="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px var(--color-primary)'" onblur="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px transparent'">
+                            <div style="display:flex; flex-direction:column; gap:2px;">
+                                <button class="tm-spin-btn" style="width:22px; height:28px;" onclick="window.adjTm('timerM', 1)"><i class="fa-solid fa-chevron-up" style="font-size:10px;"></i></button>
+                                <button class="tm-spin-btn" style="width:22px; height:28px;" onclick="window.adjTm('timerM', -1)"><i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></button>
+                            </div>
+                        </div>
+                        <span style="font-size:10px; font-weight:800; color:var(--color-text-muted); letter-spacing: 0.5px;">DAKİKA</span>
+                    </div>
+                    
+                    <div style="font-size:28px; font-weight:900; color:var(--color-border-strong); margin-bottom: 20px;">:</div>
+                    
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <input id="timerS" type="number" min="0" max="59" value="0"
+                                style="width:58px; height:58px; text-align:center; font-size:26px; font-weight:900; border:none; border-radius:16px; padding:0; color:var(--color-text-main); background:var(--color-bg-input); outline:none; font-variant-numeric:tabular-nums; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px transparent; transition: 0.2s;"
+                                onfocus="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px var(--color-primary)'" onblur="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 2px transparent'">
+                            <div style="display:flex; flex-direction:column; gap:2px;">
+                                <button class="tm-spin-btn" style="width:22px; height:28px;" onclick="window.adjTm('timerS', 1)"><i class="fa-solid fa-chevron-up" style="font-size:10px;"></i></button>
+                                <button class="tm-spin-btn" style="width:22px; height:28px;" onclick="window.adjTm('timerS', -1)"><i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></button>
+                            </div>
+                        </div>
+                        <span style="font-size:10px; font-weight:800; color:var(--color-text-muted); letter-spacing: 0.5px;">SANİYE</span>
+                    </div>
+                </div>
+                
+                <div id="timerDisplay" style="display:none; font-size:clamp(36px, 5.5vw, 56px); font-weight:900; color:var(--color-text-main); letter-spacing:1px; font-variant-numeric:tabular-nums; line-height:1;">00:00:00</div>
+            </div>
+            
+            <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; align-items:center;">
+                <button id="timerStartBtn" onclick="window.timerToggle()"
+                    style="padding:10px 24px; border:none; border-radius:50px; background: linear-gradient(135deg, var(--color-primary) 0%, #00d2ff 100%); color:#fff; font-size:14px; font-weight:800; cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); min-width:100px; box-shadow: 0 6px 15px rgba(0,123,255,0.3);"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,123,255,0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 15px rgba(0,123,255,0.3)';">
+                    <i class="fa-solid fa-play"></i> Başlat
+                </button>
+                <button id="timerResetBtn" onclick="window.timerReset()"
+                    style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; border:1px solid var(--color-border-strong); border-radius:50%; background:var(--color-bg-card); color:var(--color-text-secondary); font-size:14px; cursor:pointer; transition:all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05);"
+                    onmouseover="this.style.background='var(--color-bg-input)'; this.style.color='var(--color-text-main)'; this.style.transform='rotate(-30deg)';" onmouseout="this.style.background='var(--color-bg-card)'; this.style.color='var(--color-text-secondary)'; this.style.transform='rotate(0)';">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+                
+                <div id="tmTaskPill" style="display:flex; align-items:center; background:var(--color-bg-card); border:2px solid var(--color-primary-border); border-radius:50px; padding:4px; box-shadow:0 4px 10px rgba(0,123,255,0.05); transition:all 0.3s; box-sizing:border-box;">
+                    <button id="tmPickTaskBtn" onclick="window.clkPickTask('tm')"
+                        style="width:36px; height:36px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:var(--color-primary-lighter); color:var(--color-primary); font-size:14px; cursor:pointer; transition:all 0.2s; flex-shrink:0;"
+                        onmouseover="this.style.background='var(--color-primary)'; this.style.color='#fff'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='var(--color-primary-lighter)'; this.style.color='var(--color-primary)'; this.style.transform='scale(1)';" title="Görev Seç">
+                        <i class="fa-solid fa-list-check"></i>
+                    </button>
+                    
+                    <div id="tmTaskActiveArea" style="display:none; align-items:center; gap:8px; padding-left:10px; padding-right:4px;">
+                        <span id="tmPillLessonName" style="font-size:13px; font-weight:800; color:var(--color-text-main); white-space:nowrap;">Ders</span>
+                        
+                        <button id="tmCompleteBtn" onclick="window.clkCompleteTask('tm')" style="display:none; padding:6px 12px; border:none; border-radius:50px; background:var(--color-success); color:#fff; font-size:12px; font-weight:800; cursor:pointer; transition:0.2s; align-items:center; gap:6px; box-shadow: 0 2px 5px rgba(40,167,69,0.3);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <i class="fa-solid fa-check"></i> Tamamla
+                        </button>
+                        
+                        <button id="tmClearTaskBtn" onclick="window.clearActiveTask('tm')" style="width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:#dc3545; color:#fff; font-size:12px; cursor:pointer; transition:0.2s; box-shadow: 0 2px 5px rgba(220,53,69,0.3);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Görevi Kaldır">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="timerDoneMsg" style="display:none; font-size:16px; font-weight:800; color:var(--color-success); background: var(--color-success-light); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--color-success-border); animation: pulse 1.5s infinite; margin-top:10px;">
+                <i class="fa-solid fa-bell fa-shake"></i> Süre doldu!
+            </div>
+        </div>
+
+    </div>
+
+    <div id="clkFullscreenModal" class="custom-modal" style="z-index:2000;">
+        <div class="custom-modal-content" style="max-width:95%; width:1500px; height:90vh; display:flex; flex-direction:column; padding:0; overflow:hidden; background: #0a0a0f; border: 1px solid #1f1f27; box-shadow: 0 30px 60px rgba(0,0,0,0.5);">
+
+            <div class="modal-header" style="padding:20px 30px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; background: transparent; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <div style="display:flex; align-items:center; gap:16px; background: rgba(255,255,255,0.03); padding: 6px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.05);">
+                    <button class="clk-tab-fs active" data-mode="clock" onclick="window.clkFsSetMode('clock')" style="background: transparent; border: none; color: #888; font-weight: 800; font-size: 14px; padding: 10px 20px; border-radius: 50px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-regular fa-clock" style="font-size: 16px;"></i> Saat
+                    </button>
+                    <button class="clk-tab-fs" data-mode="stopwatch" onclick="window.clkFsSetMode('stopwatch')" style="background: transparent; border: none; color: #888; font-weight: 800; font-size: 14px; padding: 10px 20px; border-radius: 50px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-stopwatch" style="font-size: 16px;"></i> Kronometre
+                    </button>
+                    <button class="clk-tab-fs" data-mode="timer" onclick="window.clkFsSetMode('timer')" style="background: transparent; border: none; color: #888; font-weight: 800; font-size: 14px; padding: 10px 20px; border-radius: 50px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-hourglass-half" style="font-size: 16px;"></i> Zamanlayıcı
+                    </button>
+                </div>
+                <button id="clkFsCloseBtn" style="width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,0.05); color: #fff; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='scale(1)';">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div style="flex:1; display:flex; align-items:center; justify-content:center; min-height:0; padding:20px; position: relative;">
+                
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(0,123,255,0.05) 0%, rgba(0,0,0,0) 70%); pointer-events: none;"></div>
+
+                <div id="clkFsModeClock" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; z-index: 1;">
+                    <div style="display: flex; align-items: flex-end;">
+                        <div id="clkFsTime" style="font-size:clamp(100px, 18vw, 220px); font-weight:900; background: linear-gradient(180deg, #ffffff 0%, #aaaaaa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing:4px; font-variant-numeric:tabular-nums; line-height:0.9; drop-shadow: 0 10px 30px rgba(0,0,0,0.5);"></div>
+                        <div id="clkFsSeconds" style="font-size:clamp(30px, 6vw, 70px); font-weight:800; color:var(--color-primary); letter-spacing:2px; font-variant-numeric:tabular-nums; margin-left: 15px; margin-bottom: 20px; text-shadow: 0 4px 15px rgba(0,123,255,0.3);"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px; background: rgba(255,255,255,0.03); padding: 12px 30px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div id="clkFsDate" style="font-size:clamp(18px, 3vw, 32px); font-weight:800; color:#e0e0e0;"></div>
+                        <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-primary);"></div>
+                        <div id="clkFsDay" style="font-size:clamp(16px, 2.5vw, 26px); font-weight:700; color:#888; text-transform: uppercase; letter-spacing: 2px;"></div>
+                    </div>
+                </div>
+
+                <div id="clkFsModeStopwatch" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:30px; text-align:center; z-index: 1;">
+                    <div id="fswTaskLabel"></div>
+                    <div id="fswTaskTarget"></div>
+                    
+                    <div style="display:flex; flex-direction: column; align-items:center; gap:10px; justify-content:center;">
+                        <div id="clkFsSwDisplay" style="font-size:clamp(80px, 14vw, 180px); font-weight:900; color:#fff; letter-spacing:4px; font-variant-numeric:tabular-nums; line-height:1; text-shadow: 0 10px 30px rgba(0,0,0,0.5);">00:00.00</div>
+                    </div>
+                    
+                    <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center; align-items:center; margin-top: 10px;">
+                        <button id="clkFsSwStartBtn" onclick="window.swFsToggle()"
+                            style="padding:20px 50px; border:none; border-radius:50px; background: linear-gradient(135deg, var(--color-success) 0%, #20c997 100%); color:#fff; font-size:22px; font-weight:900; cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); min-width:200px; box-shadow: 0 10px 25px rgba(40,167,69,0.3); letter-spacing: 1px;"
+                            onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 15px 35px rgba(40,167,69,0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 25px rgba(40,167,69,0.3)';">
+                            <i class="fa-solid fa-play" style="margin-right: 8px;"></i> Başlat
+                        </button>
+                        <button onclick="window.swFsReset()"
+                            style="width:70px; height:70px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.1); border-radius:50%; background:rgba(255,255,255,0.03); color:#aaa; font-size:24px; cursor:pointer; transition:all 0.2s;"
+                            onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#fff'; this.style.transform='rotate(-30deg)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.color='#aaa'; this.style.transform='rotate(0)';">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                        
+                        <div id="fswTaskPill" style="display:flex; align-items:center; background:rgba(255,255,255,0.03); border:2px solid rgba(255,255,255,0.1); border-radius:50px; padding:6px; box-shadow:0 8px 20px rgba(0,0,0,0.2); transition:all 0.3s; box-sizing:border-box;">
+                            <button onclick="window.clkPickTask('sw')"
+                                style="width:58px; height:58px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:rgba(0,123,255,0.2); color:var(--color-primary); font-size:24px; cursor:pointer; transition:all 0.2s; flex-shrink:0;"
+                                onmouseover="this.style.background='var(--color-primary)'; this.style.color='#fff'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(0,123,255,0.2)'; this.style.color='var(--color-primary)'; this.style.transform='scale(1)';" title="Görev Seç">
+                                <i class="fa-solid fa-list-check"></i>
+                            </button>
+                            
+                            <div id="fswTaskActiveArea" style="display:none; align-items:center; gap:12px; padding-left:16px; padding-right:6px;">
+                                <span id="fswPillLessonName" style="font-size:18px; font-weight:800; color:#fff; white-space:nowrap; letter-spacing:1px;">Ders</span>
+                                
+                                <button id="fswCompleteBtn" onclick="window.clkCompleteTask('sw')" style="display:none; padding:12px 24px; border:none; border-radius:50px; background:var(--color-success); color:#fff; font-size:16px; font-weight:800; cursor:pointer; transition:0.3s; align-items:center; gap:8px; box-shadow: 0 4px 15px rgba(40,167,69,0.3);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <i class="fa-solid fa-check"></i> Tamamla
+                                </button>
+                                
+                                <button id="fswClearTaskBtn" onclick="window.clearActiveTask('sw')" style="width:46px; height:46px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:#dc3545; color:#fff; font-size:18px; cursor:pointer; transition:0.2s; box-shadow: 0 4px 10px rgba(220,53,69,0.3);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Görevi Kaldır">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="clkFsModeTimer" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:35px; text-align:center; z-index: 1;">
+                    
+                    <div id="fstmTaskLabel"></div>
+                    
+                    <div id="clkFsTimerInputRow" style="display:flex; align-items:center; gap:20px;">
+                        <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                            <button class="tm-spin-btn-fs" onclick="window.adjTm('clkFsTimerH', 1)"><i class="fa-solid fa-chevron-up"></i></button>
+                            <input id="clkFsTimerH" type="number" min="0" max="99" value="0"
+                                style="width:120px; height:120px; text-align:center; font-size:56px; font-weight:900; border:2px solid rgba(255,255,255,0.05); border-radius:24px; padding:0; color:#fff; background:rgba(0,0,0,0.2); outline:none; font-variant-numeric:tabular-nums; box-shadow: inset 0 5px 15px rgba(0,0,0,0.4); transition: 0.3s;"
+                                onfocus="this.style.borderColor='var(--color-primary)'; this.style.background='rgba(0,123,255,0.15)';" onblur="this.style.borderColor='rgba(255,255,255,0.05)'; this.style.background='rgba(0,0,0,0.2)';">
+                            <button class="tm-spin-btn-fs" onclick="window.adjTm('clkFsTimerH', -1)"><i class="fa-solid fa-chevron-down"></i></button>
+                            <span style="font-size:16px; font-weight:800; color:#aaa; letter-spacing:2px;">SAAT</span>
+                        </div>
+                        <div style="font-size:60px; font-weight:900; color:#aaaaaa; padding-bottom: 40px;">:</div>
+                        <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                            <button class="tm-spin-btn-fs" onclick="window.adjTm('clkFsTimerM', 1)"><i class="fa-solid fa-chevron-up"></i></button>
+                            <input id="clkFsTimerM" type="number" min="0" max="59" value="0"
+                                style="width:120px; height:120px; text-align:center; font-size:56px; font-weight:900; border:2px solid rgba(255,255,255,0.05); border-radius:24px; padding:0; color:#fff; background:rgba(0,0,0,0.2); outline:none; font-variant-numeric:tabular-nums; box-shadow: inset 0 5px 15px rgba(0,0,0,0.4); transition: 0.3s;"
+                                onfocus="this.style.borderColor='var(--color-primary)'; this.style.background='rgba(0,123,255,0.15)';" onblur="this.style.borderColor='rgba(255,255,255,0.05)'; this.style.background='rgba(0,0,0,0.2)';">
+                            <button class="tm-spin-btn-fs" onclick="window.adjTm('clkFsTimerM', -1)"><i class="fa-solid fa-chevron-down"></i></button>
+                            <span style="font-size:16px; font-weight:800; color:#aaa; letter-spacing:2px;">DAKİKA</span>
+                        </div>
+                        <div style="font-size:60px; font-weight:900; color:#aaaaaa; padding-bottom: 40px;">:</div>
+                        <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                            <button class="tm-spin-btn-fs" onclick="window.adjTm('clkFsTimerS', 1)"><i class="fa-solid fa-chevron-up"></i></button>
+                            <input id="clkFsTimerS" type="number" min="0" max="59" value="0"
+                                style="width:120px; height:120px; text-align:center; font-size:56px; font-weight:900; border:2px solid rgba(255,255,255,0.05); border-radius:24px; padding:0; color:#fff; background:rgba(0,0,0,0.2); outline:none; font-variant-numeric:tabular-nums; box-shadow: inset 0 5px 15px rgba(0,0,0,0.4); transition: 0.3s;"
+                                onfocus="this.style.borderColor='var(--color-primary)'; this.style.background='rgba(0,123,255,0.15)';" onblur="this.style.borderColor='rgba(255,255,255,0.05)'; this.style.background='rgba(0,0,0,0.2)';">
+                            <button class="tm-spin-btn-fs" onclick="window.adjTm('clkFsTimerS', -1)"><i class="fa-solid fa-chevron-down"></i></button>
+                            <span style="font-size:16px; font-weight:800; color:#aaa; letter-spacing:2px;">SANİYE</span>
+                        </div>
+                    </div>
+                    
+                    <div id="clkFsTimerDisplay" style="display:none; font-size:clamp(80px, 14vw, 180px); font-weight:900; color:#fff; letter-spacing:4px; font-variant-numeric:tabular-nums; line-height:1; text-shadow: 0 10px 30px rgba(0,0,0,0.5);">00:00:00</div>
+                    
+                    <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center; align-items:center;">
+                        <button id="clkFsTimerStartBtn" onclick="window.tmFsToggle()"
+                            style="padding:20px 50px; border:none; border-radius:50px; background: linear-gradient(135deg, var(--color-primary) 0%, #00d2ff 100%); color:#fff; font-size:22px; font-weight:900; cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); min-width:200px; box-shadow: 0 10px 25px rgba(0,123,255,0.3); letter-spacing: 1px;"
+                            onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 15px 35px rgba(0,123,255,0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 25px rgba(0,123,255,0.3)';">
+                            <i class="fa-solid fa-play" style="margin-right: 8px;"></i> Başlat
+                        </button>
+                        <button onclick="window.tmFsReset()"
+                            style="width:70px; height:70px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.1); border-radius:50%; background:rgba(255,255,255,0.03); color:#aaa; font-size:24px; cursor:pointer; transition:all 0.2s;"
+                            onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#fff'; this.style.transform='rotate(-30deg)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.color='#aaa'; this.style.transform='rotate(0)';">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                        
+                        <div id="fstmTaskPill" style="display:flex; align-items:center; background:rgba(255,255,255,0.03); border:2px solid rgba(255,255,255,0.1); border-radius:50px; padding:6px; box-shadow:0 8px 20px rgba(0,0,0,0.2); transition:all 0.3s; box-sizing:border-box;">
+                            <button onclick="window.clkPickTask('tm')"
+                                style="width:58px; height:58px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:rgba(0,123,255,0.2); color:var(--color-primary); font-size:24px; cursor:pointer; transition:all 0.2s; flex-shrink:0;"
+                                onmouseover="this.style.background='var(--color-primary)'; this.style.color='#fff'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(0,123,255,0.2)'; this.style.color='var(--color-primary)'; this.style.transform='scale(1)';" title="Görev Seç">
+                                <i class="fa-solid fa-list-check"></i>
+                            </button>
+                            
+                            <div id="fstmTaskActiveArea" style="display:none; align-items:center; gap:12px; padding-left:16px; padding-right:6px;">
+                                <span id="fstmPillLessonName" style="font-size:18px; font-weight:800; color:#fff; white-space:nowrap; letter-spacing:1px;">Ders</span>
+                                
+                                <button id="fstmCompleteBtn" onclick="window.clkCompleteTask('tm')" style="display:none; padding:12px 24px; border:none; border-radius:50px; background:var(--color-success); color:#fff; font-size:16px; font-weight:800; cursor:pointer; transition:0.3s; align-items:center; gap:8px; box-shadow: 0 4px 15px rgba(40,167,69,0.3);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <i class="fa-solid fa-check"></i> Tamamla
+                                </button>
+                                
+                                <button id="fstmClearTaskBtn" onclick="window.clearActiveTask('tm')" style="width:46px; height:46px; display:flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:#dc3545; color:#fff; font-size:18px; cursor:pointer; transition:0.2s; box-shadow: 0 4px 10px rgba(220,53,69,0.3);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Görevi Kaldır">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="clkFsTimerDone" style="display:none; font-size:32px; font-weight:900; color:var(--color-success); background: rgba(40, 167, 69, 0.1); padding: 15px 40px; border-radius: 50px; border: 1px solid rgba(40, 167, 69, 0.3); animation: pulse 1.5s infinite; letter-spacing: 1px;">
+                        <i class="fa-solid fa-bell fa-shake" style="margin-right: 10px;"></i> Süre doldu!
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- WIDGET DÜZEN AYAR BUTONU -->
+    <button id="widgetLayoutBtn" onclick="window.openWidgetLayoutPanel()" data-custom-title="Widget Düzenini Ayarla"
+        style="position:fixed; z-index:200; display:none; align-items:center; justify-content:center;
+               width:34px; height:34px; border-radius:50%; border:2px solid var(--color-primary-border);
+               background:var(--color-bg-card); color:var(--color-primary); cursor:pointer;
+               font-size:13px; box-shadow:var(--shadow-md); transition:var(--transition-fast);"
+        onmouseover="this.style.background='var(--color-primary)';this.style.color='#fff';this.style.borderColor='var(--color-primary)';this.style.boxShadow='0 6px 16px rgba(0,123,255,0.35)'"
+        onmouseout="this.style.background='var(--color-bg-card)';this.style.color='var(--color-primary)';this.style.borderColor='var(--color-primary-border)';this.style.boxShadow='var(--shadow-md)'">
+        <i class="fa-solid fa-sliders"></i>
+    </button>
+
+    <div id="noteModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <div class="modal-header">
+                <h3>Yeni Not Ekle</h3>
+                <span class="close-modal-btn" id="closeNoteModalBtn">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Not Başlığı <span class="required-star">*</span></label>
+                    <input type="text" id="noteTitle" class="modal-input" placeholder="Örn: Fizik Kuvvetler Konu Özeti">
+                </div>
+                
+                <div class="input-group">
+                    <label>Açıklama <span class="required-star">*</span></label>
+                    <textarea id="noteContent" class="modal-textarea" placeholder="Not detaylarını buraya yaz..."></textarea>
+                </div>
+                
+                <div class="custom-date-section">
+                    <div class="date-box">
+                        <div class="date-icon"><i class="fa-regular fa-calendar"></i></div>
+                        <div class="date-content">
+                        <span>Başlangıç Tarihi</span>
+                        <input type="date" id="noteStartDate" class="styled-date-input" data-custom-title="Tarih seçiciyi göster">
+                    </div>
+                    </div>
+                    <i class="fa-solid fa-arrow-right date-arrow"></i>
+                    <div class="date-box">
+                        <div class="date-icon"><i class="fa-regular fa-calendar-check"></i></div>
+                        <div class="date-content">
+                        <span>Bitiş Tarihi</span>
+                        <input type="date" id="noteEndDate" class="styled-date-input" data-custom-title="Tarih seçiciyi göster">
+                    </div>
+                    </div>
+                </div>
+
+                <div class="media-section">
+                    <div class="media-section-header">
+                        <h4><i class="fa-solid fa-paperclip"></i> Yüklenen Medyalar</h4>
+                        <label for="noteMedia" class="custom-upload-btn">
+                            <i class="fa-solid fa-plus"></i> Medya Ekle
+                        </label>
+                        <input type="file" id="noteMedia" class="media-input" multiple>
+                    </div>
+                    <div id="media-preview-container" class="media-preview-area">
+                        <span class="no-media-text" id="noMediaText">Henüz medya yüklenmedi.</span>
+                        
+                        <div class="media-category" id="imageCategory" style="display: none;">
+                            <h5><i class="fa-regular fa-images"></i> Görüntüler</h5>
+                            <div class="category-items" id="imageItems"></div>
+                        </div>
+                        
+                        <div class="media-category" id="documentCategory" style="display: none;">
+                            <h5><i class="fa-regular fa-file-lines"></i> Belgeler</h5>
+                            <div class="category-items" id="documentItems"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p id="noteErrorMsg" class="error-msg">Lütfen zorunlu alanları (Başlık ve Açıklama) doldurun!</p>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="cancel-note-btn" id="cancelNoteBtn">İptal Et</button>
+                <button class="save-note-btn" id="saveNoteBtn">Notu Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mediaPreviewModal" class="media-preview-overlay">
+        <span class="close-preview-btn" id="closeMediaPreviewBtn">&times;</span>
+        <div class="preview-content-container" id="previewContentContainer">
+            </div>
+    </div>
+
+    <div id="renameMediaModal" class="custom-modal">
+        <div class="custom-modal-content" style="max-width: 400px;"> <div class="modal-header">
+                <h3>Medya Adını Düzenle</h3>
+                <span class="close-modal-btn" id="closeRenameModalBtn">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Yeni Medya Adı</label>
+                    <input type="text" id="newMediaNameInput" class="modal-input" placeholder="Örn: Matematik Çıkmış Sorular">
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="cancel-note-btn" id="cancelRenameBtn">İptal Et</button>
+                <button class="save-note-btn" id="saveRenameBtn">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewNoteModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <div class="modal-header">
+                <h3>Not Detayı</h3>
+                <span class="close-modal-btn" id="closeViewNoteModalBtn">&times;</span>
+            </div>
+            
+            <div class="modal-body view-modal-body">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 10px;">
+                    <h2 id="viewNoteTitle" class="view-note-title" style="margin: 0; flex: 1; word-wrap: break-word; font-size: 20px; font-weight: 800; color: var(--color-text-main);"></h2>
+                    <div id="viewNoteDate" class="view-note-date" style="display: none; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: var(--color-primary); background-color: var(--color-bg-hover); padding: 5px 12px; border-radius: var(--radius-md); flex-shrink: 0;"></div>
+                </div>
+                
+                <div id="viewNoteContent" class="view-note-content" style="background-color: var(--color-primary-lighter); border: 1px solid #eef2f5; border-radius: var(--radius-lg); padding: 18px; font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; white-space: pre-wrap; min-height: 100px; max-height: 300px; overflow-y: auto;"></div>
+                
+                <div id="viewNoteMediaSection" class="view-note-media-section" style="margin-top: 10px; border-top: 1px dashed #e0e0e0; padding-top: 15px; display: none;">
+                    <h4 style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 10px;"><i class="fa-solid fa-paperclip"></i> Ekli Medyalar (Açmak için tıkla)</h4>
+                    <div id="viewNoteMediaList" class="view-media-list" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+                </div>
+            </div>
+            
+            <div class="modal-footer" class="flex-between">
+                <button class="save-note-btn" id="editNoteBtn" style="background-color: #ffc107; color: var(--color-text-main);"><i class="fa-solid fa-pen"></i> Düzenle</button>
+                <button class="cancel-note-btn" id="closeViewNoteBtn">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="examModal" class="custom-modal" style="z-index: 3300;">
+        <div class="custom-modal-content" style="max-width: 550px;">
+            <div class="modal-header" style="justify-content: center; position: relative;">
+                <div class="exam-tabs">
+                    <button class="exam-tab-btn active" data-target="tyt-section">TYT</button>
+                    <button class="exam-tab-btn" data-target="ayt-section">AYT</button>
+                </div>
+                <span class="close-modal-btn" id="closeExamModalBtn" style="position: absolute; right: 25px;">&times;</span>
+            </div>
+            
+            <div class="modal-body" style="gap: 20px; padding: 25px;">
+                <div class="flex-gap-15" style="display: flex; gap: 15px; align-items: flex-start;">
+                    <div class="input-group" style="flex: 2;">
+                        <label>Deneme Adı <span class="required-star">*</span></label>
+                        <input type="text" id="examTitleInput" class="modal-input" placeholder="Örn: 3D Yayınları Türkiye Geneli">
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>Tarih <span class="required-star">*</span></label>
+                        <input type="date" id="examDateInput" class="modal-input" data-custom-title="Tarih seçiciyi göster">
+                    </div>
+                </div>
+
+                <div id="tyt-section" class="exam-section active-section">
+                    <div class="subject-inputs-container" id="tyt-subjects-container" style="max-height: 280px; overflow-y: auto; padding-right: 10px;"></div>
+                </div>
+
+                <div id="ayt-section" class="exam-section" style="display: none;">
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Alan Seçimi</label>
+                        <select id="aytTrackSelect" class="modal-input" style="cursor: pointer; background-color: var(--color-primary-lighter); color: var(--color-primary); font-weight: 700; border-color: var(--color-primary-border);">
+                            <option value="sayisal">Sayısal</option>
+                            <option value="ea">Eşit Ağırlık</option>
+                            <option value="sozel">Sözel</option>
+                            <option value="dil">Yabancı Dil</option>
+                        </select>
+                    </div>
+                    <div class="subject-inputs-container" id="ayt-subjects-container" style="max-height: 280px; overflow-y: auto; padding-right: 10px;"></div>
+                </div>
+
+                <div id="totalNetBox" style="background: var(--color-primary-lighter); border: 1px solid var(--color-primary-border); padding: 15px 20px; border-radius: var(--radius-lg); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.08);">
+                    <span style="font-weight: 800; color: var(--color-text-main); font-size: 15px;">
+                        <i class="fa-solid fa-calculator" style="margin-right: 8px; color: var(--color-primary);"></i> Toplam Net
+                    </span>
+                    <span id="totalNetValue" style="font-weight: 900; color: var(--color-primary); font-size: 26px;">0.00</span>
+                </div>
+                
+                <p id="examErrorMsg" class="error-msg">Lütfen Deneme Adı ve Tarihini girin!</p>
+            </div>
+            
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
+                <button class="cancel-note-btn" id="deleteExamBtn" style="background-color: var(--color-danger-light); color: var(--color-danger); border: 1px solid #ffc2c2; display: none; padding: 10px 15px;">
+                    <i class="fa-solid fa-trash"></i> Sil
+                </button>
+                <div style="display: flex; gap: 12px; margin-left: auto;">
+                    <button class="cancel-note-btn" id="cancelExamBtn">İptal Et</button>
+                    <button class="save-note-btn" id="saveExamBtn">Denemeyi Ekle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewExamModal" class="custom-modal" style="z-index: 3200;">
+        <div class="custom-modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Deneme Detayı</h3>
+                <span class="close-modal-btn" id="closeViewExamModalBtn">&times;</span>
+            </div>
+            
+            <div class="modal-body view-modal-body">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 5px;">
+                    <h2 id="viewExamTitle" class="view-note-title" style="margin: 0; flex: 1; word-wrap: break-word; font-size: 18px; font-weight: 800; color: var(--color-text-main);"></h2>
+                    <div id="viewExamDate" class="view-note-date" style="display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: var(--color-primary); background-color: var(--color-bg-hover); padding: 5px 12px; border-radius: var(--radius-md); flex-shrink: 0;"></div>
+                </div>
+                
+                <div id="viewExamTrackBadge" style="font-size: 10px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;"></div>
+                
+                <div id="viewExamSubjects" style="background-color: var(--color-primary-lighter); border: 1px solid #eef2f5; border-radius: var(--radius-lg); padding: 15px; max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                    </div>
+                
+                <div style="margin-top: 10px; background: #e0f7fa; border: 1px solid #17a2b8; padding: 12px 18px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 800; color: #17a2b8; font-size: 14px;"><i class="fa-solid fa-chart-line"></i> Toplam Net:</span>
+                    <span id="viewExamTotalNet" style="font-weight: 900; color: var(--color-text-main); font-size: 22px;"></span>
+                </div>
+            </div>
+            
+            <div class="modal-footer" class="flex-between">
+                <button class="save-note-btn" id="editExamBtn" style="background-color: #ffc107; color: var(--color-text-main); box-shadow: none;"><i class="fa-solid fa-pen"></i> Düzenle</button>
+                <button class="cancel-note-btn" id="closeViewExamBtn">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="examSaveConfirmModal" class="custom-modal" style="z-index: 3400;">
+        <div class="custom-modal-content modal-centered">
+            <i class="fa-solid fa-circle-question" class="modal-icon-primary"></i>
+            <h3 class="modal-title">Değişiklikleri Kaydet</h3>
+            <p class="modal-desc">Denemedeki değişiklikleri kaydetmek istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" onclick="document.getElementById('examSaveConfirmModal').style.display='none'">Hayır, Dön</button>
+                <button class="save-note-btn" id="yesExamSaveBtn">Evet, Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="examCancelConfirmModal" class="custom-modal" style="z-index: 3400;">
+        <div class="custom-modal-content modal-centered">
+            <i class="fa-solid fa-triangle-exclamation" class="modal-icon-danger"></i>
+            <h3 class="modal-title">Kaydedilmemiş Değişiklikler</h3>
+            <p class="modal-desc">Kaydetmediğiniz veriler var. Çıkmak istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" onclick="document.getElementById('examCancelConfirmModal').style.display='none'">Hayır, Kal</button>
+                <button class="save-note-btn" id="yesExamCancelBtn" class="bg-danger">Evet, Çık</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="examDeleteConfirmModal" class="custom-modal" style="z-index: 3400;">
+        <div class="custom-modal-content modal-centered">
+            <i class="fa-solid fa-trash-can" class="modal-icon-danger"></i>
+            <h3 class="modal-title">Denemeyi Sil</h3>
+            <p class="modal-desc">Bu denemeyi ve tüm net verilerini kalıcı olarak silmek istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" onclick="document.getElementById('examDeleteConfirmModal').style.display='none'">Hayır, İptal</button>
+                <button class="save-note-btn" id="yesExamDeleteBtn" class="bg-danger">Evet, Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="saveConfirmModal" class="custom-modal" style="z-index: 2500;">
+        <div class="custom-modal-content modal-centered">
+            <i class="fa-solid fa-circle-question" class="modal-icon-primary"></i>
+            <h3 class="modal-title">Değişiklikleri Kaydet</h3>
+            <p class="modal-desc">Yaptığınız değişiklikleri kaydetmek istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" id="noSaveBtn">Hayır, Dön</button>
+                <button class="save-note-btn" id="yesSaveBtn">Evet, Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cancelConfirmModal" class="custom-modal" style="z-index: 2500;">
+        <div class="custom-modal-content modal-centered">
+            <i class="fa-solid fa-triangle-exclamation" class="modal-icon-danger"></i>
+            <h3 class="modal-title">Kaydedilmemiş Değişiklikler</h3>
+            <p class="modal-desc">Kaydetmediğiniz değişiklikler var. Çıkmak istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" id="noCancelBtn">Hayır, Kal</button>
+                <button class="save-note-btn" id="yesCancelBtn" class="bg-danger">Evet, Çık</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="actionToast" class="action-toast">
+        <div class="toast-content">
+            <div class="toast-spinner"></div>
+            <span id="toastText">Kaydediliyor...</span>
+        </div>
+    </div>
+
+
+
+    <!-- VİDEO İZLEYİCİ MODAL -->
+    <div id="videoWatcherModal" class="custom-modal" style="z-index:2100;">
+        <div class="custom-modal-content" style="max-width:98%; width:1600px; height:94vh; display:flex; flex-direction:column; padding:0; overflow:hidden; background-color:#0f0f11; border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); border: 1px solid #2a2a35;">
+
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:18px 30px; border-bottom:1px solid #1f1f27; flex-shrink:0; background: linear-gradient(180deg, #181820 0%, #0f0f11 100%);">
+                <div style="display:flex; align-items:center; gap:20px;">
+                    <div style="display:flex; align-items:center; gap:10px; background: rgba(255, 0, 0, 0.1); padding: 8px 16px; border-radius: 12px; border: 1px solid rgba(255, 0, 0, 0.2);">
+                        <i class="fa-brands fa-youtube" style="color:#ff3333; font-size: 22px; filter: drop-shadow(0 0 8px rgba(255,0,0,0.5));"></i> 
+                        <h3 style="margin:0; font-size:18px; color: #ffffff; font-weight: 800; letter-spacing: 0.5px;">Playlist Merkezi</h3>
+                    </div>
+                    
+                    <div style="display:flex; align-items:center; gap:12px; background: #1a1a24; padding: 6px; border-radius: 30px; border: 1px solid #2a2a35;">
+                        <button id="vwPrevWeek" style="width:34px; height:34px; border-radius:50%; border:none; background:#252532; color:#a0a0b0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: all 0.2s;" onmouseover="this.style.background='#303040'; this.style.color='#fff';" onmouseout="this.style.background='#252532'; this.style.color='#a0a0b0';"><i class="fa-solid fa-chevron-left" style="font-size:12px;"></i></button>
+                        <span id="vwWeekLabel" style="font-size:14px; font-weight:700; color:#e0e0e0; min-width:160px; text-align:center; letter-spacing: 0.5px;"></span>
+                        <button id="vwNextWeek" style="width:34px; height:34px; border-radius:50%; border:none; background:#252532; color:#a0a0b0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: all 0.2s;" onmouseover="this.style.background='#303040'; this.style.color='#fff';" onmouseout="this.style.background='#252532'; this.style.color='#a0a0b0';"><i class="fa-solid fa-chevron-right" style="font-size:12px;"></i></button>
+                    </div>
+                </div>
+                <span class="close-modal-btn" id="vwCloseBtn" style="color: #666; font-size: 32px; transition: 0.2s;" onmouseover="this.style.color='#ff3333'" onmouseout="this.style.color='#666'">&times;</span>
+            </div>
+
+            <div id="vwDayTabs" style="display:flex; border-bottom:1px solid #1f1f27; flex-shrink:0; background:#141419; overflow-x:auto; padding: 0 15px;">
+                </div>
+
+            <div style="flex:1; display:flex; overflow:hidden;">
+
+                <div id="vwLeftPane" style="flex:1; display:flex; flex-direction:column; min-width:0; background:#0f0f11; position: relative;">
+                    
+                    <div id="vwPlaylistPane" style="flex:1; overflow-y:auto; padding:30px;">
+                        <div id="vwPlaylistGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:25px;">
+                            </div>
+                    </div>
+
+                    <div id="vwPlayerPane" style="display:none; flex:1; flex-direction:column; background: #000;">
+                        <div id="vwPlayerWrapper" style="flex:1; position:relative; background:#000; min-height:0; display:flex; justify-content:center; align-items:center;">
+                            <div style="width:100%; height:100%; position: absolute; box-shadow: inset 0 0 150px rgba(0,0,0,0.9); pointer-events: none;"></div>
+                            
+                            <iframe id="vwIframe" src="" style="flex:1; border:none; width:100%; height:100%; display:block; z-index: 1;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                        </div>
+                        <div id="vwNowPlaying" style="padding:15px 25px; background:linear-gradient(90deg, #111 0%, #1a1a1a 100%); color:#fff; font-size:16px; font-weight:700; display:flex; align-items:center; gap:12px; flex-shrink:0; border-top: 1px solid #222;">
+                            <div style="background: rgba(255,0,0,0.15); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-play" style="color:#ff3333; font-size: 14px; margin-left: 3px;"></i>
+                            </div>
+                            <span id="vwNowTitle" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow: 0 2px 4px rgba(0,0,0,0.5);"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="vwRightPane" style="display:none; width:360px; flex-shrink:0; border-left:1px solid #1f1f27; flex-direction:column; background:#141419;">
+                    
+                    <div style="padding:15px 20px; border-bottom:1px solid #1f1f27; display:flex; align-items:center; gap:8px; flex-shrink:0; background: #181820;">
+                        <button id="vwBackBtn" style="border:1px solid #333; background:#222; border-radius: 10px; cursor:pointer; color:#ccc; font-size:13px; font-weight:700; display:flex; align-items:center; gap:8px; padding:8px 14px; transition: 0.2s;" onmouseover="this.style.background='#333'; this.style.color='#fff';" onmouseout="this.style.background='#222'; this.style.color='#ccc';">
+                            <i class="fa-solid fa-arrow-left"></i> Listelere Dön
+                        </button>
+                    </div>
+                    
+                    <div id="vwVideoListTitle" style="padding:16px 20px; font-size:14px; font-weight:800; color:#fff; border-bottom:1px solid #1f1f27; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:0; background: #1a1a24; box-shadow: 0 4px 10px rgba(0,0,0,0.2);"></div>
+                    
+                    <div id="vwVideoList" style="flex:1; overflow-y:auto; padding: 10px 0;">
+                        </div>
+                    
+                    <div style="padding:20px; border-top:1px solid #1f1f27; flex-shrink:0; background: #181820; box-shadow: 0 -4px 15px rgba(0,0,0,0.3);">
+                        <button id="vwCompleteTaskBtn" disabled style="width:100%; padding:14px; border:none; background: linear-gradient(135deg, #1f8a3d 0%, #155724 100%); color:white; border-radius: 12px; font-size:14px; font-weight:800; cursor:not-allowed; opacity:0.3; display:flex; align-items:center; justify-content:center; gap:10px; transition:all 0.3s; box-shadow: 0 4px 15px rgba(31, 138, 61, 0.2);">
+                            <i class="fa-solid fa-circle-check" style="font-size: 18px;"></i> Görevi Tamamla
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    ```
+
+
+    <!-- / VİDEO İZLEYİCİ MODAL -->
+
+    <div id="graphModal" class="custom-modal" style="z-index: 2100;">
+        <div class="custom-modal-content modern-graph-card" style="max-width:95%; width:1200px; height:90vh; display:flex; flex-direction:column; padding:20px; overflow:hidden; background: var(--color-bg-card);">
+            
+            <div class="modal-header" style="padding-bottom: 15px; border-bottom: 1px solid var(--color-border); margin-bottom: 15px;">
+                <div class="graph-header">
+                    <h3 style="margin: 0; font-size: 1.2rem; color: var(--color-text-main);"><i class="fas fa-chart-line" style="color: var(--color-primary);"></i> İnteraktif Grafik Çizici</h3>
+                    <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--color-text-muted);">Fonksiyonu girin, eksenlerdeki değişimi anında görün.</p>
+                </div>
+                <span class="close-modal-btn" id="closeGraphModalBtn" style="cursor: pointer; font-size: 28px;">&times;</span>
+            </div>
+            
+            <div class="graph-controls" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <div class="input-wrapper" style="display: flex; flex: 1; align-items: center; background: var(--color-bg-input); padding: 5px 15px; border-radius: 8px; border: 1px solid var(--color-border);">
+                    <span class="f-x" style="font-weight: bold; color: var(--color-primary); margin-right: 10px;">f(x) =</span>
+                    <input type="text" id="functionInput" placeholder="Örn: sin(x), x^2, x*3 + 2, tan(x)" value="sin(x)" style="flex: 1; border: none; background: transparent; outline: none; font-size: 1rem; color: var(--color-text-main); padding: 8px 0;">
+                </div>
+                <div class="btn-group" style="display: flex; gap: 8px;">
+                    <button id="btnDraw" class="save-note-btn" style="background: var(--color-primary); border-radius: 8px; padding: 10px 20px;"><i class="fas fa-play"></i> Çiz</button>
+                    <button id="btnClear" class="cancel-note-btn" style="background: var(--color-danger); color: white; border-color: var(--color-danger); border-radius: 8px; padding: 10px 20px;"><i class="fas fa-trash"></i> Temizle</button>
+                    <button id="btnZoomIn" class="header-icon-btn" data-custom-title="Yakınlaştır"><i class="fas fa-search-plus"></i></button>
+                    <button id="btnZoomOut" class="header-icon-btn" data-custom-title="Uzaklaştır"><i class="fas fa-search-minus"></i></button>
+                </div>
+            </div>
+
+            <div class="canvas-container" style="flex: 1; width: 100%; border-radius: 12px; overflow: hidden; background: var(--color-bg-input); border: 2px solid var(--color-border); position: relative;">
+                <canvas id="graphCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
+            </div>
+            
+        </div>
+    </div>
+
+    <div id="weeklyPlannerModal" class="custom-modal" style="z-index: 2000;">
+        <div class="custom-modal-content" style="max-width: 95%; width: 1500px; height: 90vh; display: flex; flex-direction: column;">
+            
+            <div class="modal-header" style="padding: 20px 30px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 20px; margin: 0;"><i class="fa-solid fa-calendar-days" class="icon-btn-primary"></i> Haftalık Planlayıcı</h3>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button id="openExportModalBtn" onclick="window.createAndOpenExportModal()" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-md); border: 1px solid var(--color-success-border); background-color: #f1fbf3; color: var(--color-success); cursor: pointer; transition: var(--transition-fast);" data-custom-title="Programı İndir">
+                            <i class="fa-solid fa-download"></i>
+                        </button>
+                        
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button id="openPlannerFilterBtn" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-md); border: 1px solid #e2e6ea; background-color: var(--color-bg-input); color: #495057; cursor: pointer; transition: var(--transition-fast);" data-custom-title="Dersleri Filtrele">
+                                <i class="fa-solid fa-filter"></i>
+                            </button>
+                            <button id="clearPlannerFilterBtn" onclick="window.clearFilters()" style="display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-md); border: 1px solid #dc3545; background-color: #dc3545; color: white; cursor: pointer; transition: var(--transition-fast);" data-custom-title="Filtreyi Kapat">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <button id="openPlannerSettingsBtn" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-md); border: 1px solid var(--color-primary-border); background-color: var(--color-primary-lighter); color: var(--color-primary); cursor: pointer; transition: var(--transition-fast);" data-custom-title="Planlayıcı Ayarları">
+                            <i class="fa-solid fa-gear"></i>
+                        </button>
+                    </div>
+                    <span class="close-modal-btn" id="closeWeeklyPlannerBtn" style="font-size: 32px; transform: translateY(-3px); display: inline-block; line-height: 1;">&times;</span>
+                </div>
+            </div>
+            
+            <div class="modal-body" style="flex: 1; display: flex; flex-direction: column; overflow: hidden; padding: 20px 30px; background-color: #fcfcfc;">
+                
+                <div style="display: flex; justify-content: center; align-items: center; gap: 25px; margin-bottom: 25px; position: relative;">
+                    
+                    <div style="position: absolute; left: 0; display: flex; align-items: center; gap: 8px;">
+                        <div class="task-custom-select" id="tcs-plannerProfile" style="width: 180px; z-index: 100;">
+                            <div class="tcs-trigger" style="padding: 8px 12px; min-height: 38px; border-color: var(--color-primary-border); background: var(--color-primary-lighter); color: var(--color-primary);"><span class="tcs-text" id="activeProfileText"><i class="fa-solid fa-star" class="icon-star"></i> Ana Program</span> <i class="fa-solid fa-chevron-down"></i></div>
+                            <div class="tcs-options" id="plannerProfileOptions">
+                                <div class="tcs-option selected" data-value="main_profile"><i class="fa-solid fa-star" class="icon-star"></i> Ana Program</div>
+                            </div>
+                            <input type="hidden" id="currentPlannerProfile" value="main_profile">
+                        </div>
+                        
+                        <button class="save-note-btn" id="addNewProfileBtn" data-custom-title="Yeni Program Ekle" style="padding: 0; width: 38px; height: 38px; display: flex; justify-content: center; align-items: center; border-radius: var(--radius-md);">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+
+                        <button id="openVideoWatcherBtn" data-custom-title="Playlistleri İzle" style="padding: 0 14px; height: 38px; display: flex; align-items: center; gap: 7px; border-radius: var(--radius-md); border: 1px solid #ff4444; background: #fff0f0; color: #ff4444; cursor: pointer; font-size: 13px; font-weight: 800; transition: var(--transition-fast);" onmouseover="this.style.background='#ff4444';this.style.color='white';" onmouseout="this.style.background='#fff0f0';this.style.color='#ff4444';">
+                            <i class="fa-brands fa-youtube" style="font-size: 16px;"></i> Playlistleri İzle
+                        </button>
+                        
+                        <button class="cancel-note-btn" id="setAsMainProfileBtn" data-custom-title="Bu programı Ana yap (Günlük ekranda göster)" style="display: none; padding: 0 12px; height: 38px; align-items: center; justify-content: center; gap: 6px; border-radius: var(--radius-md); color: #d39e00; border-color: #ffeeba; background-color: var(--color-bg-card)8eb; font-size: 12px; font-weight: 800;">
+                            <i class="fa-regular fa-star"></i> Ana Yap
+                        </button>
+                    </div>
+
+                    <button id="prevWeekBtn" class="week-nav-btn" data-custom-title="Önceki Hafta"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <h2 id="weekDateRangeDisplay" style="font-size: 24px; font-weight: 800; color: var(--color-text-main); letter-spacing: 0.5px;">9 - 15 Mart</h2>
+                        <span style="font-size: 12px; font-weight: 700; color: var(--color-text-muted);">Haftalık Görünüm</span>
+                    </div>
+                    <button id="nextWeekBtn" class="week-nav-btn" data-custom-title="Sonraki Hafta"><i class="fa-solid fa-chevron-right"></i></button>
+
+                    <div style="position: absolute; right: 0; display: flex; gap: 10px;">
+                        <button id="cancelActionModeBtn" style="display: none; align-items: center; justify-content: center; gap: 6px; background-color: #fff0f0; color: #dc3545; border: 1px solid #ffcccc; padding: 8px 16px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(220,53,69,0.15);" onmouseover="this.style.background='#dc3545'; this.style.color='#ffffff'; this.style.borderColor='#dc3545'; this.style.transform='scale(1.04)';" onmouseout="this.style.background='#fff0f0'; this.style.color='#dc3545'; this.style.borderColor='#ffcccc'; this.style.transform='scale(1)';">
+                            <i class="fa-solid fa-xmark" style="font-size: 15px; transform: translateY(1px);"></i> İptal
+                        </button>
+                        
+                        <div id="completeDropZone" class="action-drop-zone complete-zone" data-custom-title="Tamamlamak için sürükle veya mod için tıkla">
+                            <i class="fa-solid fa-check-double"></i> <span id="completeZoneText">Tamamla</span>
+                        </div>
+                        <div id="duplicateDropZone" class="action-drop-zone" data-custom-title="Çoğaltmak için sürükle veya mod için tıkla">
+                            <i class="fa-solid fa-copy"></i> <span id="duplicateZoneText">Çoğalt</span>
+                        </div>
+                        <div id="removeDropZone" class="action-drop-zone remove-zone" data-custom-title="Silmek için sürükle veya mod için tıkla">
+                            <i class="fa-solid fa-trash"></i> <span id="removeZoneText">Kaldır</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weekly-grid-container" style="flex: 1; overflow-x: auto; min-height: 0;">
+                    <div class="weekly-grid" id="weeklyGrid">
+                        </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="addTaskModal" class="custom-modal" style="z-index: 2500;">
+        <div class="custom-modal-content" id="addTaskModalContent" style="max-width: 520px; display: flex; flex-direction: row; gap: 0; padding: 0; overflow: hidden; transition: max-width 0.3s ease;">
+            <div id="addTaskMainPanel" style="width: 520px; flex-shrink: 0; display: flex; flex-direction: column;">
+                
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-list-check" class="icon-btn-primary"></i> Yeni Görev Ekle</h3>
+                    <span class="close-modal-btn" id="closeAddTaskModalBtn">&times;</span>
+                </div>
+                
+                <div class="modal-body" style="gap: 15px;">
+                    
+                    <div class="flex-gap-15">
+                        <div class="input-group" style="flex: 1.2;">
+                            <label>Sınav Türü</label>
+                            <div class="task-custom-select" id="tcs-examType">
+                                <div class="tcs-trigger"><span class="tcs-text">TYT</span> <i class="fa-solid fa-chevron-down"></i></div>
+                                <div class="tcs-options">
+                                    <div class="tcs-option selected" data-value="tyt">TYT</div>
+                                    <div class="tcs-option" data-value="ayt">AYT</div>
+                                </div>
+                                <input type="hidden" id="taskExamType" value="tyt">
+                            </div>
+                        </div>
+                        
+                        <div class="input-group" id="taskTrackGroup" style="flex: 1; display: none;">
+                            <label>Alan</label>
+                            <div class="task-custom-select" id="tcs-track">
+                                <div class="tcs-trigger"><span class="tcs-text">Sayısal</span> <i class="fa-solid fa-chevron-down"></i></div>
+                                <div class="tcs-options">
+                                    <div class="tcs-option selected" data-value="sayisal">Sayısal</div>
+                                    <div class="tcs-option" data-value="ea">Eşit Ağırlık</div>
+                                    <div class="tcs-option" data-value="sozel">Sözel</div>
+                                    <div class="tcs-option" data-value="dil">Yabancı Dil</div>
+                                </div>
+                                <input type="hidden" id="taskTrack" value="sayisal">
+                            </div>
+                        </div>
+
+                        <div class="input-group" style="flex: 1.5;">
+                            <label>Ders Seçimi</label>
+                            <div class="task-custom-select" id="tcs-subject">
+                                <div class="tcs-trigger"><span class="tcs-text">Türkçe</span> <i class="fa-solid fa-chevron-down"></i></div>
+                                <div class="tcs-options" id="dynamicSubjectOptions">
+                                </div>
+                                <input type="hidden" id="taskSubject" value="Türkçe">
+                            </div>
+                        </div>
+
+                        <div class="input-group" id="taskSubLessonGroup" style="flex: 1.5; display:none;">
+                            <label>Alt Ders</label>
+                            <div class="task-custom-select" id="tcs-taskSubLesson">
+                                <div class="tcs-trigger" id="tcs-taskSubLessonTrigger"><span class="tcs-text">Genel</span> <i class="fa-solid fa-chevron-down"></i></div>
+                                <div class="tcs-options" id="tcs-taskSubLessonOptions"></div>
+                                <input type="hidden" id="taskSubLesson" value="Genel">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Görev Türü</label>
+                        <div style="display: flex; gap: 10px; align-items: stretch;">
+                            <div class="task-custom-select" id="tcs-taskType" class="flex-1">
+                                <div class="tcs-trigger" id="tcs-taskTypeTrigger" style="background-color: var(--color-primary-lighter); color: var(--color-primary);"><span class="tcs-text">Konu Anlatımı</span> <i class="fa-solid fa-chevron-down"></i></div>
+                                <div class="tcs-options" id="taskTypeOptions">
+                                    <div class="tcs-option selected" data-value="Konu Anlatımı">Konu Anlatımı</div>
+                                    <div class="tcs-option" data-value="Test Çözümü">Test Çözümü</div>
+                                    <div class="tcs-option" data-value="Deneme Çözümü">Deneme Çözümü</div>
+                                    <div class="tcs-option" data-value="Genel Tekrar">Genel Tekrar</div>
+                                    <div class="tcs-option" data-value="Genel Deneme" style="display: none;">Genel Deneme</div>
+                                </div>
+                                <input type="hidden" id="taskType" value="Konu Anlatımı">
+                            </div>
+                            
+                            <button type="button" id="selectFromPlaylistBtn" class="save-note-btn" style="display: flex; gap: 8px; align-items: center; justify-content: center; background-color: #ff0000; padding: 0 15px; font-size: 13px; border-radius: 10px; box-shadow: none;">
+                                <i class="fa-brands fa-youtube" style="font-size: 16px;"></i> Seç
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="playlistSelectionSummary" style="display: none; background: var(--color-primary-lighter); border: 1px solid var(--color-primary-border); border-radius: var(--radius-lg); padding: 15px; margin-top: 5px; transition: var(--transition-base); box-shadow: 0 4px 10px rgba(0,123,255,0.05); position: relative; overflow: hidden;">
+                        
+                        <div id="videoWarningOverlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(217, 83, 79, 0.9); z-index: 10; flex-direction: column; justify-content: center; align-items: center; color: white; backdrop-filter: blur(2px);">
+                            <i class="fa-solid fa-triangle-exclamation" style="font-size: 24px; margin-bottom: 5px;"></i>
+                            <span style="font-size: 12px; font-weight: 800; text-align: center; padding: 0 10px;">Görev kaydedilince videolar görevden kaldırılacak!</span>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--color-primary-border); padding-bottom: 10px; margin-bottom: 10px;">
+                            <div style="font-weight: 800; color: var(--color-primary-hover); font-size: 13px;" id="pss-text"><i class="fa-solid fa-list-check"></i> 0 Video Eklendi</div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="color: var(--color-text-muted); font-weight: 800; font-size: 11px;">Hız:</span>
+                                <div id="customSpeedSelector" style="display: flex; gap: 2px; background: var(--color-bg-card); padding: 3px; border-radius: var(--radius-md); border: 1px solid var(--color-primary-border); align-items: center;">
+                                    <div class="speed-opt active" data-val="1">1x</div>
+                                    <div class="speed-opt" data-val="1.25">1.25x</div>
+                                    <div class="speed-opt" data-val="1.5">1.5x</div>
+                                    <div class="speed-opt" data-val="1.75">1.75x</div>
+                                    <div class="speed-opt" data-val="2">2x</div>
+                                    <input type="text" id="customSpeedInput" placeholder="Özel" style="width: 45px; padding: 3px; border: 1px solid var(--color-primary-border); border-radius: var(--radius-sm); font-size: 11px; font-weight: 700; color: var(--color-primary); text-align: center; outline: none; margin-left: 2px; background: var(--color-primary-lighter); cursor: pointer; transition: 0.2s;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="pss-video-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto; margin-bottom: 10px; padding-right: 5px;">
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-hover); padding: 8px 12px; border-radius: var(--radius-md);">
+                            <span style="font-weight: 800; color: var(--color-primary); font-size: 12px;"><i class="fa-solid fa-stopwatch"></i> Videoların Süresi:</span>
+                            <span id="pss-duration" style="font-weight: 900; font-size: 14px; color: var(--color-primary-hover);">0 Dk</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Açıklama / Hedef <span class="required-star">*</span></label>
+                        <textarea id="taskDesc" class="modal-textarea" placeholder="Hangi konu çalışılacak veya kaç soru çözülecek?" style="min-height: 70px;"></textarea>
+                    </div>
+
+                    <div class="flex-gap-15" id="taskDurationRow" style="flex-wrap: wrap;">
+                        <div class="input-group" id="taskDurationGroup" style="flex: 1 1 100%;">
+                            <label>Tahmini Süre <span class="required-star">*</span></label>
+                            <div class="custom-number-input">
+                                <input type="number" id="taskDuration" class="modal-input no-spinner" placeholder="Örn: 45" min="1">
+                                <span class="cni-label">Dakika</span>
+                                <div class="cni-controls">
+                                    <button type="button" class="cni-btn" id="durDownBtn"><i class="fa-solid fa-minus"></i></button>
+                                    <button type="button" class="cni-btn" id="durUpBtn"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                            
+                        <div class="input-group" id="taskQuestionCountGroup" style="flex: 1; display: none;">
+                            <label>Soru Sayısı</label>
+                            <div class="custom-number-input">
+                                <input type="number" id="taskQuestionCount" class="modal-input no-spinner" placeholder="Örn: 40" min="1" style="padding-right: 85px; transition: all 0.3s;">
+                                <span class="cni-label" style="right: 75px; pointer-events: none;">Soru</span>
+                                <div class="cni-controls">
+                                    <button type="button" class="cni-btn" id="qcDownBtn"><i class="fa-solid fa-minus"></i></button>
+                                    <button type="button" class="cni-btn" id="qcUpBtn"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p id="taskErrorMsg" class="error-msg">Lütfen Açıklama ve Tahmini Süre alanlarını doldurun!</p>
+                </div>
+                
+                <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                    <button class="cancel-note-btn" id="deleteTaskBtn" style="background-color: var(--color-danger-light); color: var(--color-danger); border: 1px solid #ffc2c2; display: none; padding: 8px 16px;"><i class="fa-solid fa-trash"></i> Sil</button>
+                    <div style="display: flex; gap: 10px; margin-left: auto;">
+                        <button class="cancel-note-btn" id="cancelTaskBtn" style="padding: 8px 16px;">İptal</button>
+                        <button class="save-note-btn" id="saveTaskBtn" style="padding: 8px 20px;">Görevi Kaydet</button>
+                    </div>
+                </div>
+            </div><!-- /addTaskMainPanel -->
+
+            <!-- SAĞ VİDEO PANELİ -->
+            <div id="taskVideoPanel" style="display: none; width: 480px; flex-shrink: 0; border-left: 1px solid var(--color-border); flex-direction: column; background: var(--color-bg-card); overflow: hidden;">
+                <div id="taskVideoPanelHeader" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 14px; border-bottom: 1px solid var(--color-border); flex-shrink: 0;">
+                    <div id="taskVideoPanelTitle" style="font-size: 15px; font-weight: 800; color: var(--color-text-main); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-brands fa-youtube" style="color:#ff0000; font-size:18px;"></i>
+                        <span>Playlist Seç</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;" id="taskVideoPanelActions"></div>
+                </div>
+                
+                <div id="taskVideoPanelBody" style="flex: 1; overflow-y: auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 0; min-height: 60px;"></div>
+                
+                <div id="taskVideoPanelSummary" style="display: none; flex-shrink: 0; padding: 10px 14px 12px 14px; background: var(--color-bg-card);">
+                    <div style="background: var(--color-primary-lighter); border: 1px solid var(--color-primary-border); border-radius: var(--radius-lg); padding: 12px 14px; position: relative; overflow: hidden; box-shadow: 0 4px 10px rgba(0,123,255,0.05);">
+                        <div id="tvpWarningOverlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(217, 83, 79, 0.9); z-index: 10; flex-direction: column; justify-content: center; align-items: center; color: white; backdrop-filter: blur(2px);">
+                            <i class="fa-solid fa-triangle-exclamation" style="font-size: 20px; margin-bottom: 5px;"></i>
+                            <span style="font-size: 11px; font-weight: 800; text-align: center; padding: 0 10px;">Görev kaydedilince videolar görevden kaldırılacak!</span>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--color-primary-border); padding-bottom: 8px; margin-bottom: 8px;">
+                            <div style="font-weight: 800; color: var(--color-primary-hover); font-size: 12px; white-space: nowrap;" id="tvp-text"><i class="fa-solid fa-list-check"></i> 0 Video Eklendi</div>
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <span style="color: var(--color-text-muted); font-weight: 800; font-size: 11px;">Hız:</span>
+                                <div id="tvp-speedSelector" style="display: flex; gap: 1px; background: var(--color-bg-card); padding: 2px; border-radius: var(--radius-md); border: 1px solid var(--color-primary-border); align-items: center;">
+                                    <div class="speed-opt active" data-val="1" style="padding: 3px 5px;">1x</div>
+                                    <div class="speed-opt" data-val="1.25" style="padding: 3px 5px;">1.25x</div>
+                                    <div class="speed-opt" data-val="1.5" style="padding: 3px 5px;">1.5x</div>
+                                    <div class="speed-opt" data-val="1.75" style="padding: 3px 5px;">1.75x</div>
+                                    <div class="speed-opt" data-val="2" style="padding: 3px 5px;">2x</div>
+                                    <input type="text" id="tvp-customSpeedInput" placeholder="Özel" style="width: 34px; padding: 3px; border: 1px solid var(--color-primary-border); border-radius: var(--radius-sm); font-size: 10px; font-weight: 700; color: var(--color-primary); text-align: center; outline: none; margin-left: 2px; background: var(--color-primary-lighter); cursor: pointer; transition: 0.2s;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="tvp-video-list" style="max-height: 110px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;"></div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-hover); padding: 5px 10px; border-radius: var(--radius-md);">
+                            <span style="font-weight: 800; color: var(--color-primary); font-size: 11px;"><i class="fa-solid fa-stopwatch"></i> Toplam Süre:</span>
+                            <span id="tvp-duration" style="font-weight: 900; font-size: 13px; color: var(--color-primary-hover);">0 Dk</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="taskVideoPanelFooter" style="display: none; padding: 10px 16px; border-top: 1px solid var(--color-border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;">
+                    <button class="cancel-note-btn" id="taskVideoPanelBackBtn" style="font-size: 12px; padding: 6px 12px;"><i class="fa-solid fa-arrow-left"></i> Geri</button>
+                    <button class="save-note-btn" id="taskVideoPanelConfirmBtn" style="font-size: 12px; padding: 6px 14px;">Seçilenleri Ekle (0)</button>
+                </div>
+            </div><!-- /taskVideoPanel -->
+
+        </div><!-- /custom-modal-content -->
+    </div><!-- /addTaskModal -->
+
+    <div id="expandedExamMultiDeleteConfirmModal" class="custom-modal" style="z-index: 3800;">
+        <div class="custom-modal-content modal-centered">
+            <i class="fa-solid fa-trash-can" style="font-size: 52px; color: var(--color-danger); margin-bottom: 15px;"></i>
+            <h3 class="modal-title" style="color: var(--color-danger);">Seçili Denemeleri Sil</h3>
+            <p id="expandedMultiDeleteConfirmMsg" class="modal-desc">Seçilen denemeleri kalıcı olarak silmek istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" onclick="document.getElementById('expandedExamMultiDeleteConfirmModal').style.display='none'">İptal</button>
+                <button class="save-note-btn bg-danger" id="yesExpandedExamMultiDeleteBtn">Evet, Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addProfileModal" class="custom-modal" style="z-index: 3000;">
+        <div class="custom-modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-folder-plus" class="icon-btn-primary"></i> Yeni Program Ekle</h3>
+                <span class="close-modal-btn" id="closeAddProfileModalBtn">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Program Adı <span class="required-star">*</span></label>
+                    <input type="text" id="newProfileNameInput" class="modal-input" placeholder="Örn: Ara Tatil Kampı, 2. Dönem Programı">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-note-btn" onclick="document.getElementById('addProfileModal').style.display='none'">İptal Et</button>
+                <button class="save-note-btn" id="saveNewProfileBtn">Programı Oluştur</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewTaskModal" class="custom-modal" style="z-index: 2600;">
+        <div class="custom-modal-content" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-clipboard-list" class="icon-btn-primary"></i> Görev Detayı</h3>
+                <span class="close-modal-btn" id="closeViewTaskModalBtn">&times;</span>
+            </div>
+            
+            <div class="modal-body view-modal-body">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 5px;">
+                    <h2 id="viewTaskSubject" class="view-note-title" style="margin: 0; flex: 1; word-wrap: break-word; font-size: 19px; font-weight: 800; color: var(--color-text-main);"></h2>
+                    <span id="viewTaskBadge" class="task-card-badge" style="font-size: 11px; padding: 5px 10px;"></span>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 5px; font-size: 12px; font-weight: 800; flex-wrap: wrap;">
+                    <span id="viewTaskType" style="color: var(--color-primary); background: var(--color-bg-hover); padding: 4px 10px; border-radius: var(--radius-sm);"></span>
+                    <span id="viewTaskQuestionCount" style="display: none; color: #fd7e14; background: var(--color-bg-card)8e1; padding: 4px 10px; border-radius: var(--radius-sm);"></span>
+                    <span id="viewTaskDuration" style="color: #6c757d; background: var(--color-bg-input); padding: 4px 10px; border-radius: var(--radius-sm);"></span>
+                </div>
+                
+                <div id="viewTaskDesc" style="margin-top: 10px; background-color: var(--color-primary-lighter); border: 1px solid #eef2f5; border-radius: var(--radius-lg); padding: 15px; font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; white-space: pre-wrap;"></div>
+                
+                <div id="viewTaskVideoList" style="display: none; margin-top: 15px; border-top: 1px dashed var(--color-primary-border); padding-top: 15px;">
+                    <h4 style="font-size: 13px; color: var(--color-primary); margin-bottom: 10px;"><i class="fa-solid fa-list-ul"></i> Plana Eklenen Videolar</h4>
+                    <div id="vtv-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; padding-right: 5px;"></div>
+                </div>
+            </div>
+            
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="save-note-btn" id="completeTaskBtn" style="padding: 8px 16px; box-shadow: none; border: 1px solid transparent;"><i class="fa-solid fa-check"></i> Tamamla</button>
+                    <button class="cancel-note-btn" id="editTaskBtn" style="background-color: #fff9e6; color: #b58900; border: 1px solid #ffeeba; padding: 8px 16px; font-weight: 800; transition: 0.2s;" onmouseover="this.style.background='#ffedb3'" onmouseout="this.style.background='#fff9e6'"><i class="fa-solid fa-pen"></i> Düzenle</button>
+                    <button id="openYoutubeTaskBtn" onclick="window.playTaskYoutubeVideos()" style="background: #fff0f0; color: #ff0000; border: 1px solid #ffcccc; border-radius: var(--radius-md); padding: 8px 16px; font-size: 13px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;" onmouseover="this.style.background='#ff0000'; this.style.color='#fff';" onmouseout="this.style.background='#fff0f0'; this.style.color='#ff0000';">
+                        <i class="fa-brands fa-youtube" style="font-size: 16px;"></i> YouTube
+                    </button>
+                </div>
+                <button class="cancel-note-btn" id="closeViewTaskBtn" style="padding: 8px 16px;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="taskSaveConfirmModal" class="custom-modal" style="z-index: 2700;">
+        <div class="custom-modal-content" style="max-width: 360px; width: 90%; padding: 30px 25px 25px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); border: none;">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background-color: var(--color-primary-lighter); color: var(--color-primary); display: flex; justify-content: center; align-items: center; margin: 0 auto 20px auto; font-size: 32px; box-shadow: 0 0 0 8px rgba(0,123,255,0.05);">
+                <i class="fa-solid fa-floppy-disk"></i>
+            </div>
+            <h3 style="font-size: 19px; font-weight: 800; color: var(--color-text-main); margin-bottom: 10px;">Değişiklikleri Kaydet</h3>
+            <p style="font-size: 14px; font-weight: 600; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 25px;">Görevdeki değişiklikleri kaydetmek istediğinize emin misiniz?</p>
+            <div style="display: flex; gap: 12px; width: 100%;">
+                <button onclick="document.getElementById('taskSaveConfirmModal').style.display='none'" style="flex: 1; padding: 12px 0; border-radius: 14px; font-weight: 800; font-size: 14px; background: #f1f3f5; color: #6c757d; border: none; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#e2e6ea'; this.style.color='#495057';" onmouseout="this.style.background='#f1f3f5'; this.style.color='#6c757d';">Hayır, Dön</button>
+                <button id="yesTaskSaveBtn" style="flex: 1; padding: 12px 0; border-radius: 14px; font-weight: 800; font-size: 14px; background: var(--color-primary); color: white; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">Evet, Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="taskCancelConfirmModal" class="custom-modal" style="z-index: 2700;">
+        <div class="custom-modal-content" style="max-width: 360px; width: 90%; padding: 30px 25px 25px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); border: none;">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background-color: #fff8e6; color: #ffc107; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px auto; font-size: 32px; box-shadow: 0 0 0 8px rgba(255, 193, 7, 0.1);">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 style="font-size: 19px; font-weight: 800; color: var(--color-text-main); margin-bottom: 10px;">Kaydedilmemiş Değişiklikler</h3>
+            <p style="font-size: 14px; font-weight: 600; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 25px;">Kaydetmediğiniz veriler var. Çıkmak istediğinize emin misiniz?</p>
+            <div style="display: flex; gap: 12px; width: 100%;">
+                <button onclick="document.getElementById('taskCancelConfirmModal').style.display='none'" style="flex: 1; padding: 12px 0; border-radius: 14px; font-weight: 800; font-size: 14px; background: #f1f3f5; color: #6c757d; border: none; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#e2e6ea'; this.style.color='#495057';" onmouseout="this.style.background='#f1f3f5'; this.style.color='#6c757d';">Hayır, Kal</button>
+                <button id="yesTaskCancelBtn" style="flex: 1; padding: 12px 0; border-radius: 14px; font-weight: 800; font-size: 14px; background: var(--color-danger); color: white; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(217, 83, 79, 0.25);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">Evet, Çık</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="taskDeleteConfirmModal" class="custom-modal" style="z-index: 2700;">
+        <div class="custom-modal-content" style="max-width: 360px; width: 90%; padding: 30px 25px 25px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); border: none;">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background-color: var(--color-danger-light); color: var(--color-danger); display: flex; justify-content: center; align-items: center; margin: 0 auto 20px auto; font-size: 32px; box-shadow: 0 0 0 8px rgba(217, 83, 79, 0.05);">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h3 style="font-size: 19px; font-weight: 800; color: var(--color-text-main); margin-bottom: 10px;">Görevi Sil</h3>
+            <p style="font-size: 14px; font-weight: 600; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 25px;">Bu görevi kalıcı olarak silmek istediğinize emin misiniz?</p>
+            <div style="display: flex; gap: 12px; width: 100%;">
+                <button onclick="document.getElementById('taskDeleteConfirmModal').style.display='none'" style="flex: 1; padding: 12px 0; border-radius: 14px; font-weight: 800; font-size: 14px; background: #f1f3f5; color: #6c757d; border: none; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#e2e6ea'; this.style.color='#495057';" onmouseout="this.style.background='#f1f3f5'; this.style.color='#6c757d';">İptal</button>
+                <button id="yesTaskDeleteBtn" style="flex: 1; padding: 12px 0; border-radius: 14px; font-weight: 800; font-size: 14px; background: var(--color-danger); color: white; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(217, 83, 79, 0.25);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">Evet, Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="taskMultiDuplicateConfirmModal" class="custom-modal" style="z-index: 2700;">
+        <div class="custom-modal-content modal-centered">
+            <i class="fa-solid fa-copy" style="font-size: 50px; color: var(--color-success); margin-bottom: 15px;"></i>
+            <h3 class="modal-title">Görevi Çoğalt</h3>
+            <p id="duplicateConfirmMsg" class="modal-desc">Görevi seçilen günlere kopyalamak istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" onclick="document.getElementById('taskMultiDuplicateConfirmModal').style.display='none'">İptal</button>
+                <button class="save-note-btn" id="yesTaskMultiDuplicateBtn" class="bg-success">Evet, Çoğalt</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="taskMultiDeleteConfirmModal" class="custom-modal" style="z-index: 2700;">
+        <div class="custom-modal-content modal-centered">
+            <i class="fa-solid fa-trash-can" style="font-size: 52px; color: var(--color-danger); margin-bottom: 15px;"></i>
+            <h3 class="modal-title" style="color: var(--color-danger);">Seçili Görevleri Sil</h3>
+            <p id="multiDeleteConfirmMsg" class="modal-desc">Seçilen görevleri kalıcı olarak silmek istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" onclick="document.getElementById('taskMultiDeleteConfirmModal').style.display='none'">İptal</button>
+                <button class="save-note-btn bg-danger" id="yesTaskMultiDeleteBtn">Evet, Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="taskCompleteConfirmModal" class="custom-modal" style="z-index: 2700;">
+        <div class="custom-modal-content modal-centered" style="max-width:400px;">
+            <i id="singleCompleteIcon" class="fa-solid fa-check-circle" style="font-size: 50px; color: var(--color-success); margin-bottom: 15px;"></i>
+            <h3 id="singleCompleteTitle" class="modal-title">Görevi Tamamla</h3>
+            <p id="singleCompleteMsg" class="modal-desc">Bu görevi tamamlandı olarak işaretlemek istediğinize emin misiniz?</p>
+            <!-- Süre güncelleme alanı -->
+            <div id="completeUpdateDurRow" style="display:none; align-items:center; gap:10px; justify-content:center; margin-bottom:18px; background:var(--color-primary-lighter); border:1px solid var(--color-primary-border); border-radius:var(--radius-lg); padding:10px 16px;">
+                <i class="fa-solid fa-clock" style="color:var(--color-primary); font-size:14px;"></i>
+                <span style="font-size:13px; font-weight:700; color:var(--color-text-secondary); white-space:nowrap;">Gerçek süre:</span>
+                <input id="completeNewDuration" type="number" min="1" max="600" placeholder="dk"
+                    style="width:64px; text-align:center; font-size:16px; font-weight:800; border:2px solid var(--color-primary-border); border-radius:var(--radius-md); padding:5px 4px; color:var(--color-text-main); background:var(--color-bg-card); outline:none;"
+                    onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-primary-border)'">
+                <span style="font-size:13px; font-weight:700; color:var(--color-text-secondary);">dk</span>
+            </div>
+            <div class="modal-actions" style="flex-direction:column; gap:8px;">
+                <div style="display:flex; gap:10px; width:100%;">
+                    <button class="cancel-note-btn" id="cancelTaskCompleteBtn" style="flex:1;">İptal</button>
+                    <button class="save-note-btn" id="yesTaskCompleteBtn" class="bg-success" style="flex:1;">Evet, Tamamlandı</button>
+                </div>
+                <button id="yesTaskCompleteUpdateBtn" style="display:none; width:100%; padding:10px; border:none; border-radius:var(--radius-lg); background:var(--color-primary); color:#fff; font-size:14px; font-weight:800; cursor:pointer; transition:var(--transition-fast);">
+                    <i class="fa-solid fa-floppy-disk"></i> Süreyi Güncelle ve Tamamla
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="taskMultiCompleteConfirmModal" class="custom-modal" style="z-index: 2700;">
+        <div class="custom-modal-content modal-centered">
+            <i id="multiCompleteIcon" class="fa-solid fa-check-double" style="font-size: 50px; color: var(--color-success); margin-bottom: 15px;"></i>
+            <h3 id="multiCompleteTitle" class="modal-title">Seçili Görevleri Tamamla</h3>
+            <p id="multiCompleteConfirmMsg" class="modal-desc">Seçilen görevleri tamamlandı olarak işaretlemek istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" onclick="document.getElementById('taskMultiCompleteConfirmModal').style.display='none'">İptal</button>
+                <button class="save-note-btn" id="yesTaskMultiCompleteBtn" class="bg-success">Evet, Tamamla</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="playlistsModal" class="custom-modal" style="z-index: 3000;">
+        <div class="custom-modal-content" style="max-width: 95%; width: 1200px; height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-header" style="padding: 20px 30px;">
+                <h3 style="font-size: 20px;">
+                    <i class="fa-brands fa-youtube" style="color: #ff0000; margin-right: 8px; font-size: 24px; vertical-align: middle;"></i> Playlistlerim
+                </h3>
+                <span class="close-modal-btn" id="closePlaylistsModalBtn" style="font-size: 28px;">&times;</span>
+            </div>
+            <div class="modal-body" style="flex: 1; display: flex; flex-direction: column; overflow: hidden; padding: 25px 30px; background-color: #fcfcfc;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <h2 style="font-size: 22px; font-weight: 800; color: var(--color-text-main);">Kayıtlı Listeler</h2>
+                        <span style="font-size: 13px; font-weight: 600; color: var(--color-text-muted);">Çalışırken dinlediğin veya izlediğin favori oynatma listelerin.</span>
+                    </div>
+                    <div class="flex-gap-10">
+                        <button class="cancel-note-btn" id="togglePlaylistDeleteModeBtn" style="display: flex; align-items: center; gap: 8px; font-size: 14px; padding: 12px 20px; color: var(--color-danger); border-color: #ffc2c2; background-color: var(--color-danger-light);">
+                            <i class="fa-solid fa-trash"></i> Kaldır
+                        </button>
+                        <button class="save-note-btn" id="addNewPlaylistBtn" style="display: flex; align-items: center; gap: 8px; font-size: 14px; padding: 12px 20px;">
+                            <i class="fa-solid fa-plus"></i> Yeni Playlist Ekle
+                        </button>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 2px solid #eef2f5; flex-wrap: wrap;">
+                    <div style="display: flex; flex-direction: column; flex: 1; min-width: 120px;">
+                        <label style="font-size: 11px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 4px;">Sınav Türü</label>
+                        <select id="filterExam" class="modal-input" style="padding: 8px; font-size: 12px; font-weight: 700; color: var(--color-primary); cursor: pointer; background-color: var(--color-primary-lighter);">
+                            <option value="all">Tüm Alanlar</option>
+                            <option value="tyt">TYT</option>
+                            <option value="ayt">AYT</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; flex: 1; min-width: 120px;">
+                        <label style="font-size: 11px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 4px;">Alan Seçimi</label>
+                        <select id="filterTrack" class="modal-input" style="padding: 8px; font-size: 12px; font-weight: 700; color: var(--color-primary); cursor: pointer; background-color: var(--color-primary-lighter);" disabled>
+                            <option value="all">Tüm Alanlar</option>
+                            <option value="sayisal">Sayısal</option>
+                            <option value="ea">Eşit Ağırlık</option>
+                            <option value="sozel">Sözel</option>
+                            <option value="dil">Yabancı Dil</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; flex: 2; min-width: 150px;">
+                        <label style="font-size: 11px; font-weight: 800; color: var(--color-text-muted); margin-bottom: 4px;">Ders Seçimi</label>
+                        <select id="filterSubject" class="modal-input" style="padding: 8px; font-size: 12px; font-weight: 700; color: var(--color-primary); cursor: pointer; background-color: var(--color-primary-lighter);">
+                            <option value="all">Tüm Dersler</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="playlistsGrid" style="flex: 1; overflow-y: auto; padding-right: 5px;">
+                    <div class="placeholder-text" style="text-align: center; padding: 40px; font-size: 14px;">
+                        <i class="fa-brands fa-youtube" style="font-size: 40px; color: var(--color-primary-border); margin-bottom: 15px; display: block;"></i>
+                        Yükleniyor...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="statsModal" class="custom-modal" style="z-index: 3000;">
+        <div class="custom-modal-content" style="max-width: 95%; width: 1200px; height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-header" style="padding: 20px 30px;">
+                <h3 style="font-size: 20px;">
+                    <i class="fa-solid fa-chart-pie" style="color: var(--color-primary); margin-right: 8px; font-size: 24px; vertical-align: middle;"></i> İstatistiklerim
+                </h3>
+                <span class="close-modal-btn" id="closeStatsModalBtn" style="font-size: 28px;">&times;</span>
+            </div>
+            
+            <div class="modal-body" style="flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 25px 30px; background-color: #fcfcfc; gap: 20px;">
+                
+                <div style="display: flex; gap: 15px; align-items: center; background: var(--color-bg-card); padding: 15px 20px; border-radius: var(--radius-lg); border: 1px solid #eef2f5; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+                    <label style="font-weight: 800; color: var(--color-text-secondary); font-size: 14px;"><i class="fa-solid fa-calendar-day"></i> Zaman Aralığı:</label>
+                    
+                    <div class="custom-select-wrapper" id="statsTimeWrapper" style="width: 200px; position: relative; z-index: 3001;">
+                        <div class="custom-select-trigger" id="statsTimeTrigger" style="background-color: var(--color-primary-lighter); color: var(--color-primary); font-weight: 700; font-size: 13px; border-radius: var(--radius-md); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid var(--color-primary-border); transition: 0.2s;">
+                            <span id="statsTimeText">Tüm Zamanlar</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="custom-options" id="statsTimeOptions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-bg-card); border: 1px solid #ddd; border-radius: var(--radius-md); margin-top: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden;">
+                            <span class="custom-option" data-value="weekly" style="display: block; padding: 10px 15px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--color-text-secondary); border-bottom: 1px solid #f0f4f8;" onmouseover="this.style.background='#f8fbff'" onmouseout="this.style.background='transparent'">Bu Hafta</span>
+                            <span class="custom-option" data-value="monthly" style="display: block; padding: 10px 15px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--color-text-secondary); border-bottom: 1px solid #f0f4f8;" onmouseover="this.style.background='#f8fbff'" onmouseout="this.style.background='transparent'">Bu Ay</span>
+                            <span class="custom-option" data-value="all" style="display: block; padding: 10px 15px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--color-text-secondary); border-bottom: 1px solid #f0f4f8;" onmouseover="this.style.background='#f8fbff'" onmouseout="this.style.background='transparent'">Tüm Zamanlar</span>
+                            <span class="custom-option" data-value="custom" style="display: block; padding: 10px 15px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--color-text-secondary);" onmouseover="this.style.background='#f8fbff'" onmouseout="this.style.background='transparent'">Özel Tarih Aralığı...</span>
+                        </div>
+                        <input type="hidden" id="statsTimeFilter" value="all">
+                    </div>
+                    
+                    <div id="statsCustomDate" style="display: none; align-items: center; gap: 10px;">
+                        <input type="date" id="statsStartDate" class="modal-input" style="font-size: 12px;">
+                        <i class="fa-solid fa-arrow-right" style="color: #ccc;"></i>
+                        <input type="date" id="statsEndDate" class="modal-input" style="font-size: 12px;">
+                        <button id="applyStatsFilterBtn" class="save-note-btn" style="padding: 8px 15px; font-size: 12px;">Uygula</button>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
+                    <div style="background: var(--color-bg-hover); border: 1px solid var(--color-primary-border); padding: 20px; border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: 5px;">
+                        <span style="color: var(--color-primary); font-size: 13px; font-weight: 800;"><i class="fa-solid fa-stopwatch"></i> Toplam Çalışma</span>
+                        <span id="statTotalTime" style="font-size: 24px; font-weight: 900; color: var(--color-primary-hover);">0 Saat 0 Dk</span>
+                    </div>
+                    <div style="background: var(--color-bg-card)8eb; border: 1px solid #ffeeba; padding: 20px; border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: 5px;">
+                        <span style="color: #b58900; font-size: 13px; font-weight: 800;"><i class="fa-solid fa-clipboard-question"></i> Çözülen Soru</span>
+                        <span id="statTotalQuestions" style="font-size: 24px; font-weight: 900; color: #856404;">0</span>
+                    </div>
+                    <div style="background: #fcf1f1; border: 1px solid #fad2d2; padding: 20px; border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: 5px;">
+                        <span style="color: #dc3545; font-size: 13px; font-weight: 800;"><i class="fa-brands fa-youtube"></i> İzlenen Video</span>
+                        <span id="statTotalVideos" style="font-size: 24px; font-weight: 900; color: #a71d2a;">0 Video (0 Dk)</span>
+                    </div>
+                    <div style="background: #e6f9ed; border: 1px solid var(--color-success-border); padding: 20px; border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: 5px;">
+                        <span style="color: var(--color-success); font-size: 13px; font-weight: 800;"><i class="fa-solid fa-file-signature"></i> Girilen Deneme</span>
+                        <span id="statTotalExams" style="font-size: 24px; font-weight: 900; color: #155724;">0 Deneme</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 10px;">
+                    <div style="flex: 1; min-width: 400px; background: var(--color-bg-card); padding: 20px; border-radius: var(--radius-lg); border: 1px solid #eef2f5; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+                        <h4 style="margin-bottom: 15px; color: var(--color-text-main); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-chart-bar" class="icon-primary"></i> Derslere Göre Çalışma (Dk) & Soru</h4>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="statsSubjectDistributionChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 400px; background: var(--color-bg-card); padding: 20px; border-radius: var(--radius-lg); border: 1px solid #eef2f5; box-shadow: 0 4px 15px rgba(0,0,0,0.02); display: flex; flex-direction: column;">
+    
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h4 style="color: var(--color-text-main); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-list-check" style="color: #b58900;"></i> Deneme Listesi</h4>
+                            
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div class="custom-select-wrapper" id="statsTrackWrapper" style="display: none; width: 120px; position: relative; z-index: 3001;">
+                                    <div class="custom-select-trigger" id="statsTrackTrigger" style="background: var(--color-bg-card)3cd; color: #b58900; font-weight: 800; font-size: 11px; border-radius: var(--radius-sm); padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid #ffeeba;">
+                                        <span id="statsTrackText">Sayısal</span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </div>
+                                    <div class="custom-options" id="statsTrackOptions" style="display: none; position: absolute; top: 100%; right: 0; min-width: 100%; background: var(--color-bg-card); border: 1px solid #ddd; border-radius: var(--radius-sm); margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden;">
+                                        <span class="custom-option" data-value="sayisal" style="display: block; padding: 8px 10px; cursor: pointer; font-size: 11px; font-weight: 700; color: var(--color-text-muted); border-bottom: 1px solid #eee;" onmouseover="this.style.background='#fff9e6'" onmouseout="this.style.background='transparent'">Sayısal</span>
+                                        <span class="custom-option" data-value="ea" style="display: block; padding: 8px 10px; cursor: pointer; font-size: 11px; font-weight: 700; color: var(--color-text-muted); border-bottom: 1px solid #eee;" onmouseover="this.style.background='#fff9e6'" onmouseout="this.style.background='transparent'">Eşit Ağırlık</span>
+                                        <span class="custom-option" data-value="sozel" style="display: block; padding: 8px 10px; cursor: pointer; font-size: 11px; font-weight: 700; color: var(--color-text-muted); border-bottom: 1px solid #eee;" onmouseover="this.style.background='#fff9e6'" onmouseout="this.style.background='transparent'">Sözel</span>
+                                        <span class="custom-option" data-value="dil" style="display: block; padding: 8px 10px; cursor: pointer; font-size: 11px; font-weight: 700; color: var(--color-text-muted);" onmouseover="this.style.background='#fff9e6'" onmouseout="this.style.background='transparent'">Dil</span>
+                                    </div>
+                                    <input type="hidden" id="statsAytTrackSelect" value="sayisal">
+                                </div>
+
+                                <div style="display: flex; background: #eef2f5; border-radius: var(--radius-md); padding: 3px; gap: 2px;">
+                                    <button id="statsBtnTyt" style="padding: 5px 15px; border: none; background: var(--color-primary); color: white; border-radius: var(--radius-sm); font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.2s;">TYT</button>
+                                    <button id="statsBtnAyt" style="padding: 5px 15px; border: none; background: transparent; color: var(--color-text-muted); border-radius: var(--radius-sm); font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.2s;">AYT</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="flex: 1; overflow-y: auto; max-height: 350px;" id="statsExamList">
+                            </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div id="addPlaylistModal" class="custom-modal" style="z-index: 3100;">
+        <div class="custom-modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-link" class="icon-btn-primary"></i> Playlist Aktar</h3>
+                <span class="close-modal-btn" id="closeAddPlaylistModalBtn">&times;</span>
+            </div>
+            <div class="modal-body" style="gap: 15px;">
+                <div class="flex-gap-15">
+                    <div class="input-group" style="flex: 1.2;">
+                        <label>Sınav Türü</label>
+                        <div class="task-custom-select" id="p-tcs-examType">
+                            <div class="tcs-trigger"><span class="tcs-text">TYT</span> <i class="fa-solid fa-chevron-down"></i></div>
+                            <div class="tcs-options">
+                                <div class="tcs-option selected" data-value="tyt">TYT</div>
+                                <div class="tcs-option" data-value="ayt">AYT</div>
+                            </div>
+                            <input type="hidden" id="playlistExamType" value="tyt">
+                        </div>
+                    </div>
+                    <div class="input-group" id="playlistTrackGroup" style="flex: 1; display: none;">
+                        <label>Alan</label>
+                        <div class="task-custom-select" id="p-tcs-track">
+                            <div class="tcs-trigger"><span class="tcs-text">Sayısal</span> <i class="fa-solid fa-chevron-down"></i></div>
+                            <div class="tcs-options">
+                                <div class="tcs-option selected" data-value="sayisal">Sayısal</div>
+                                <div class="tcs-option" data-value="ea">Eşit Ağırlık</div>
+                                <div class="tcs-option" data-value="sozel">Sözel</div>
+                                <div class="tcs-option" data-value="dil">Yabancı Dil</div>
+                            </div>
+                            <input type="hidden" id="playlistTrack" value="sayisal">
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Ders Seçimi</label>
+                    <div class="task-custom-select" id="p-tcs-subject">
+                        <div class="tcs-trigger"><span class="tcs-text">Türkçe</span> <i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="tcs-options" id="p-dynamicSubjectOptions">
+                            <div class="tcs-option selected" data-value="Türkçe">Türkçe</div>
+                            <div class="tcs-option" data-value="Sosyal Bilimler">Sosyal Bilimler</div>
+                            <div class="tcs-option" data-value="Temel Matematik">Temel Matematik</div>
+                            <div class="tcs-option" data-value="Fen Bilimleri">Fen Bilimleri</div>
+                        </div>
+                        <input type="hidden" id="playlistSubject" value="Türkçe">
+                    </div>
+                </div>
+                
+                <!-- PLAYLIST ALT DERS -->
+                <div class="input-group" id="playlistSubLessonGroup" style="display:none;">
+                    <label>Alt Ders</label>
+                    <select id="playlistSubLesson" style="width:100%; padding:10px 12px; border:1px solid var(--color-border-strong); border-radius:var(--radius-md); font-size:14px; font-weight:700; background:var(--color-bg-card); color:var(--color-text-main); cursor:pointer; outline:none; appearance:none; -webkit-appearance:none; background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><path fill=%22%23888%22 d=%22M8 11L2 5h12z%22/></svg>'); background-repeat:no-repeat; background-position:right 10px center; background-size:12px; padding-right:30px;"></select>
+                </div>
+
+                <div class="input-group">
+                    <label>Playlist Adı <span class="required-star">*</span></label>
+                    <input type="text" id="yeniGercekIsimKutusu" class="modal-input" placeholder="Örn: Dr. Biyoloji Sistemler Kampı">
+                </div>
+                
+                <div class="input-group">
+                    <label>YouTube Playlist Linki <span class="required-star">*</span></label>
+                    <div class="flex-gap-10">
+                        <input type="text" id="playlistLinkInput" class="modal-input" placeholder="https://www.youtube.com/playlist?list=..." class="flex-1">
+                        <button class="save-note-btn" id="fetchPlaylistBtn" style="flex-shrink: 0;"><i class="fa-solid fa-cloud-arrow-down"></i> Videoları Bul</button>
+                    </div>
+                </div>
+                <div style="max-height: 250px; overflow-y: auto; border: 1px solid #eef2f5; border-radius: 10px; background: var(--color-primary-lighter); padding: 10px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;" id="youtubeVideoTable">
+                        <thead style="position: sticky; top: -10px; background: var(--color-primary-lighter); z-index: 10;">
+                            <tr style="text-align: left; color: var(--color-text-secondary); border-bottom: 2px solid var(--color-primary-border);">
+                                <th style="padding: 8px;">Kapak</th>
+                                <th style="padding: 8px;">Video Adı</th>
+                                <th style="padding: 8px; width: 60px;">Süre</th>
+                            </tr>
+                        </thead>
+                        <tbody id="youtubeTabloGovdesi">
+                            <tr><td colspan="3" style="text-align: center; padding: 20px; color: var(--color-text-light);">Link girip "Videoları Bul" butonuna basınız.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: flex-end;">
+                <button class="cancel-note-btn" id="cancelAddPlaylistBtn">İptal</button>
+                <button class="save-note-btn" id="confirmSavePlaylistBtn" style="display: none; background-color: var(--color-success);">Listeyi Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewPlaylistModal" class="custom-modal" style="z-index: 3200;">
+        <div class="custom-modal-content" style="max-width: 750px; max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <h3>
+                    <i class="fa-solid fa-list" class="icon-btn-primary"></i> 
+                    <span id="vp-title">Playlist Detayı</span>
+                    <i class="fa-solid fa-pen" id="editPlaylistTitleIcon" style="font-size: 14px; color: var(--color-text-light); cursor: pointer; margin-left: 10px; transition: color 0.2s;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text-light)'" data-custom-title="Başlığı Düzenle"></i>
+                </h3>
+                <span class="close-modal-btn" id="closeViewPlaylistModalBtn">&times;</span>
+            </div>
+            <div class="modal-body" style="overflow-y: auto; padding: 15px; flex: 1;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1px; padding: 10px 15px; background: var(--color-bg-hover); border-radius: var(--radius-md); color: var(--color-primary); font-weight: bold; border: 1px solid var(--color-primary-border);">                    <span id="vp-count"><i class="fa-solid fa-video"></i> 0 Video</span>
+                    <span id="vp-duration"><i class="fa-solid fa-stopwatch"></i> 0 Saat 0 Dk</span>
+                    <span id="vp-progress"><i class="fa-solid fa-percent"></i> %0 Tamamlandı</span>
+                </div>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;" id="vp-table">
+                    <thead style="position: sticky; top: -15px; background: var(--color-bg-card); z-index: 10;">
+                        <tr style="text-align: left; color: var(--color-text-secondary); border-bottom: 2px solid var(--color-primary-border);">
+                            <th style="padding: 8px; width: 40px;">No</th>
+                            <th style="padding: 8px; width: 90px;">Kapak</th>
+                            <th style="padding: 8px;">Video Adı</th>
+                            <th style="padding: 8px; width: 80px;">Süre</th>
+                            <th style="padding: 8px; width: 60px; text-align: center;">İzlendi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vp-tbody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer" style="justify-content: flex-end; padding: 15px; border-top: 1px solid #eef2f5; background-color: var(--color-bg-input);">
+                <button class="cancel-note-btn" id="cancelViewPlaylistBtn" style="margin-right: 12px;">Kapat</button>
+                <button class="save-note-btn" id="savePlaylistProgressBtn" class="bg-success"><i class="fa-solid fa-floppy-disk"></i> İlerlemeyi Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="renamePlaylistModal" class="custom-modal" style="z-index: 3500;">
+        <div class="custom-modal-content" style="max-width: 400px;"> 
+            <div class="modal-header">
+                <h3>Playlist Adını Düzenle</h3>
+                <span class="close-modal-btn" id="closeRenamePlaylistModalBtn">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Yeni Playlist Adı</label>
+                    <input type="text" id="newPlaylistNameInput" class="modal-input" placeholder="Örn: Limit Türev İntegral Kampı">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-note-btn" id="cancelRenamePlaylistBtn">İptal Et</button>
+                <button class="save-note-btn" id="saveRenamePlaylistBtn">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="playlistSaveConfirmModal" class="custom-modal" style="z-index: 3400;">
+        <div class="custom-modal-content modal-centered">
+            <i class="fa-solid fa-circle-question" class="modal-icon-primary"></i>
+            <h3 class="modal-title">İlerlemeyi Kaydet</h3>
+            <p class="modal-desc">İzlenme durumundaki değişiklikleri kaydetmek istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" onclick="document.getElementById('playlistSaveConfirmModal').style.display='none'">Hayır, Dön</button>
+                <button class="save-note-btn" id="yesPlaylistSaveBtn">Evet, Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="playlistCancelConfirmModal" class="custom-modal" style="z-index: 3400;">
+        <div class="custom-modal-content modal-centered">
+            <i class="fa-solid fa-triangle-exclamation" class="modal-icon-danger"></i>
+            <h3 class="modal-title">Kaydedilmemiş Değişiklikler</h3>
+            <p class="modal-desc">Kaydetmediğiniz ilerleme değişiklikleri var. Çıkmak istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" onclick="document.getElementById('playlistCancelConfirmModal').style.display='none'">Hayır, Kal</button>
+                <button class="save-note-btn" id="yesPlaylistCancelBtn" class="bg-danger">Evet, Çık</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="playlistDeleteConfirmModal" class="custom-modal" style="z-index: 3300;">
+        <div class="custom-modal-content modal-centered">
+            <i class="fa-solid fa-trash-can" class="modal-icon-danger"></i>
+            <h3 class="modal-title">Playlistleri Sil</h3>
+            <p id="playlistDeleteConfirmMsg" class="modal-desc">Seçilen playlistleri kalıcı olarak silmek istediğinize emin misiniz?</p>
+            <div class="modal-actions">
+                <button class="cancel-note-btn" onclick="document.getElementById('playlistDeleteConfirmModal').style.display='none'">İptal</button>
+                <button class="save-note-btn" id="yesPlaylistDeleteBtn" class="bg-danger">Evet, Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="customAlertModal" class="custom-modal" style="z-index: 9999;">
+        <div class="custom-modal-content" style="max-width: 350px; text-align: center; padding: 30px; border-top: 5px solid var(--color-danger);">
+            <i class="fa-solid fa-circle-exclamation" class="modal-icon-danger"></i>
+            <h3 style="margin-bottom: 10px; color: var(--color-text-main); font-size: 18px;">Eksik Bilgi</h3>
+            <p id="customAlertMessage" style="color: var(--color-text-muted); font-size: 14px; margin-bottom: 25px;">Lütfen playliste isim veriniz.</p>
+            <button class="save-note-btn" onclick="document.getElementById('customAlertModal').style.display='none'" style="width: 100%; background-color: var(--color-danger);">Tamam</button>
+        </div>
+    </div>
+
+    <div id="selectPlaylistModal" class="custom-modal" style="z-index: 2800;">
+        <div class="custom-modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3><i class="fa-brands fa-youtube" style="color:#ff0000; margin-right:8px;"></i> Ana Playlistler (<span id="spm-subject"></span>)</h3>
+                <span class="close-modal-btn" id="closeSelectPlaylistModalBtn">&times;</span>
+            </div>
+            <div class="modal-body" id="spm-body" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 15px;">
+                </div>
+        </div>
+    </div>
+    
+    <div id="selectVideoModal" class="custom-modal" style="z-index: 2900;">
+        <div class="custom-modal-content" style="max-width: 600px;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3><i class="fa-solid fa-video" class="icon-btn-primary"></i> Görev Yapılacak Videoları Seç</h3>
+                <span class="close-modal-btn" id="closeSelectVideoModalBtn" style="line-height: 1;">&times;</span>
+            </div>
+            <div class="modal-body" id="svm-body" style="max-height: 450px; overflow-y: auto; padding: 10px 15px;">
+                </div>
+            <div class="modal-footer" style="justify-content: space-between; padding: 15px; border-top: 1px solid #eef2f5;">
+                <button class="cancel-note-btn" id="backToPlaylistsBtn"><i class="fa-solid fa-arrow-left"></i> Geri</button>
+                <button class="save-note-btn" id="confirmSelectedVideosBtn" style="background-color: var(--color-primary);">Seçilenleri Ekle (0)</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="expandedExamsModal" class="custom-modal" style="z-index: 3100;">
+        <div class="custom-modal-content" style="max-width: 95%; width: 1400px; height: 90vh; display: flex; flex-direction: column; background: #f4f7f6;">
+            
+            <div class="modal-header" style="padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-card);">
+                <div style="display: flex; align-items: center; gap: 30px; flex-wrap: wrap;">
+                    <h3 style="font-size: 22px; margin:0; color: var(--color-text-main);"><i class="fa-solid fa-chart-pie" class="icon-btn-primary"></i> Deneme Analiz Merkezi</h3>
+                    <div class="exam-tabs" style="margin: 0; gap: 15px; display: flex; align-items: center;">
+                        <button class="exam-tab-btn active" id="expandedTabTyt" style="font-size: 16px;">TYT Analizleri</button>
+                        <button class="exam-tab-btn" id="expandedTabAyt" style="font-size: 16px;">AYT Analizleri</button>
+                        
+                        <div id="expandedAytTrackSelector" style="display: none; margin-left: 10px;">
+                            <div class="task-custom-select" style="width: 150px;">
+                                <div class="tcs-trigger" style="background: var(--color-primary-lighter); color:var(--color-primary); border-color:var(--color-primary-border); padding: 6px 12px;"><span class="tcs-text">Sayısal</span> <i class="fa-solid fa-chevron-down"></i></div>
+                                <div class="tcs-options">
+                                    <div class="tcs-option selected" data-value="sayisal">Sayısal</div>
+                                    <div class="tcs-option" data-value="ea">Eşit Ağırlık</div>
+                                    <div class="tcs-option" data-value="sozel">Sözel</div>
+                                    <div class="tcs-option" data-value="dil">Yabancı Dil</div>
+                                </div>
+                                <input type="hidden" id="expandedAytTrack" value="sayisal">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button id="expandedSettingsBtn" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-md); border: 1px solid var(--color-primary-border); background-color: var(--color-primary-lighter); color: var(--color-primary); cursor: pointer; transition: var(--transition-fast);" data-custom-title="Gelişmiş Ayarlar">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                    <button class="save-note-btn" id="expandedAddNewExamBtn" style="display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 8px 16px; background-color: var(--color-primary);">
+                        <i class="fa-solid fa-plus"></i> Yeni Deneme Ekle
+                    </button>
+                    <span class="close-modal-btn" id="closeExpandedExamsBtn" style="font-size: 32px; transform: translateY(-3px); display: inline-block;">&times;</span>
+                </div>
+            </div>
+            
+            <div class="modal-body" style="flex: 1; display: flex; flex-direction: row; overflow: hidden; padding: 0;">
+                <div style="width: 320px; background: var(--color-bg-card); border-right: 1px solid #eef2f5; display: flex; flex-direction: column; flex-shrink: 0; position: relative;">
+                    
+                    <div style="padding: 20px 20px 10px 20px; border-bottom: 1px solid #eef2f5; font-weight: 800; color: var(--color-primary); font-size: 14px; display: flex; justify-content: space-between; align-items: center;">
+                        <span>Kayıtlı Denemeler</span>
+                        <span id="expandedExamCount" style="color: var(--color-text-muted); font-size: 12px; background: var(--color-primary-lighter); padding: 2px 8px; border-radius: var(--radius-sm);">0</span>
+                    </div>
+
+                    <div id="expandedExamsList" style="flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; padding-bottom: 80px;">
+                        </div>
+
+                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: var(--color-bg-card); border-top: 1px solid #eef2f5; padding: 12px 15px; display: flex; flex-direction: column; gap: 10px; z-index: 10; box-shadow: 0 -4px 10px rgba(0,0,0,0.02);">
+                        
+                        <div id="examDefaultActionBtns" style="display: flex; gap: 10px; width: 100%; flex-wrap: wrap;">
+                            
+                            <div style="display: flex; flex: 1;">
+                                <button class="save-note-btn" id="openExamSortBtn" style="flex: 1; background-color: var(--color-primary-lighter); color: var(--color-primary); border: 1px solid var(--color-primary-border); font-size: 12px; font-weight: 800; display: flex; justify-content: center; gap: 6px; align-items: center; padding: 10px 0; border-radius: var(--radius-md) 0 0 8px; transition: var(--transition-fast);">
+                                    <i class="fa-solid fa-arrow-down-a-z"></i> Sırala
+                                </button>
+                                <button class="cancel-note-btn" id="resetExamSortBtn" data-custom-title="Sıralamayı Sıfırla" style="background-color: var(--color-danger-light); color: var(--color-danger); border: 1px solid #ffc2c2; border-left: none; padding: 0 14px; border-radius: 0 8px 8px 0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition-fast);">
+                                    <i class="fa-solid fa-xmark" style="font-size: 15px;"></i>
+                                </button>
+                            </div>
+                            
+                            <div style="display: flex; flex: 1;">
+                                <button class="save-note-btn" id="openExamFilterBtn" style="flex: 1; background-color: var(--color-primary-lighter); color: var(--color-primary); border: 1px solid var(--color-primary-border); font-size: 12px; font-weight: 800; display: flex; justify-content: center; gap: 6px; align-items: center; padding: 10px 0; border-radius: var(--radius-md) 0 0 8px; transition: var(--transition-fast);">
+                                    <i class="fa-solid fa-filter"></i> Filtrele
+                                </button>
+                                <button class="cancel-note-btn" id="resetExamFilterBtn" data-custom-title="Filtreyi Sıfırla" style="background-color: var(--color-danger-light); color: var(--color-danger); border: 1px solid #ffc2c2; border-left: none; padding: 0 14px; border-radius: 0 8px 8px 0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition-fast);">
+                                    <i class="fa-solid fa-xmark" style="font-size: 15px;"></i>
+                                </button>
+                            </div>
+                            
+                            <button class="cancel-note-btn" id="toggleExamDeleteModeBtn" data-custom-title="Çoklu Silme Modu" style="display: flex; align-items: center; justify-content: center; color: var(--color-danger); border: 1px solid #ffc2c2; background-color: var(--color-danger-light); padding: 0 14px; border-radius: var(--radius-md); transition: var(--transition-fast);">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <div id="examDeleteActionBtns" style="display: none; width: 100%; gap: 10px;">
+                            <button class="cancel-note-btn" id="cancelExamDeleteBtn" style="flex: 1; font-size: 12px; font-weight: 800;">İptal Et</button>
+                            <button class="save-note-btn" id="confirmExamDeleteBtn" style="flex: 1; background-color: var(--color-danger); font-size: 12px; font-weight: 800;">Sil (0)</button>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div id="expandedChartsContainer" style="flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 20px;">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-card); padding: 12px 20px; border-radius: var(--radius-lg); border: 1px solid #eef2f5;">
+                        <span style="font-size: 14px; font-weight: 800; color: var(--color-text-secondary);"><i class="fa-solid fa-chart-area" style="color:var(--color-primary); margin-right: 5px;"></i> Detaylı Analiz Grafikleri</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: 8px; background: var(--color-primary-lighter); padding: 4px 10px; border-radius: var(--radius-md); border: 1px solid var(--color-primary-border);">
+                                    <div id="customTrendPeriodToggle" data-period="week" style="display: flex; background: #e9ecef; border-radius: var(--radius-lg); padding: 2px; cursor: pointer; border: 1px solid #dee2e6; user-select: none;" onclick="window.toggleTrendPeriod()">
+                                        <div id="periodWeekBtn" style="padding: 2px 8px; font-size: 10px; font-weight: 800; border-radius: 10px; transition: var(--transition-base); background: var(--color-primary); color: var(--color-bg-card); box-shadow: 0 2px 4px rgba(0,123,255,0.3);">Hafta</div>
+                                        <div id="periodMonthBtn" style="padding: 2px 8px; font-size: 10px; font-weight: 800; border-radius: 10px; transition: var(--transition-base); background: transparent; color: #6c757d;">Ay</div>
+                                    </div>
+                                    <span style="color: var(--color-primary-border); margin: 0 -2px;">|</span>
+                                    <span id="expandedTrendlineSlopeText" style="font-size: 11px; font-weight: 800; color: var(--color-text-muted); min-width: 85px; text-align: center;" data-custom-title="Ortalama Net Değişimi">0.00 net/hf</span>
+                                    <label class="switch" style="margin: 0; transform: scale(0.7); transform-origin: center;" data-custom-title="Eğilim (Trend) Çizgisini Aç/Kapat">
+                                        <input type="checkbox" id="expandedTrendlineToggle" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px; background: var(--color-bg-card)8eb; padding: 4px 10px; border-radius: var(--radius-md); border: 1px solid #ffeeba;">
+                                    <span style="font-size: 11px; font-weight: 800; color: #b58900;"><i class="fa-solid fa-bullseye"></i> Hedef</span>
+                                    <label class="switch" style="margin: 0; transform: scale(0.7); transform-origin: center;" data-custom-title="Hedef Net Çizgilerini Aç/Kapat">
+                                        <input type="checkbox" id="expandedTargetToggle" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--color-bg-card); border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #eef2f5;">
+                        <h4 style="margin-bottom: 15px; color: var(--color-text-main); font-size: 16px; font-weight: 800;"><i class="fa-solid fa-chart-line" style="color:var(--color-primary); margin-right: 5px;"></i> Genel Net Gidişatı</h4>
+                        <div style="height: 280px; position: relative;">
+                            <canvas id="expandedMainChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <h4 style="color: var(--color-text-secondary); font-size: 15px; font-weight: 800; margin-top: 5px; margin-bottom: -5px;"><i class="fa-solid fa-layer-group" style="color:#ffc107; margin-right: 5px;"></i> Ders Bazlı İlerleme</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;" id="expandedSubjectChartsContainer">
+                        </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="examFilterModal" class="custom-modal" style="z-index: 3500;">
+        <div class="custom-modal-content" style="max-width: 450px; overflow: visible !important; border-radius: 14px; position: relative;">
+            
+            <div id="customToast" style="position: absolute; top: -75px; left: 50%; width: 90%; background: var(--color-bg-card); border-left: 5px solid var(--color-danger); padding: 12px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-radius: var(--radius-md); display: flex; align-items: center; gap: 12px; z-index: 9999; transform: translate(-50%, 20px); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                <i class="fa-solid fa-circle-exclamation" id="toastIcon" style="color: var(--color-danger); font-size: 24px;"></i>
+                <div>
+                    <div style="font-weight: 800; color: var(--color-text-main); font-size: 13px; margin-bottom: 2px;" id="toastTitle">Hatalı Net Yazımı</div>
+                    <div style="color: var(--color-text-muted); font-size: 11px; font-weight: 600;" id="toastMessage">Lütfen değerleri kontrol edin.</div>
+                </div>
+            </div>
+
+            <div class="modal-header" style="border-top-left-radius: 14px; border-top-right-radius: 14px;">
+                <h3><i class="fa-solid fa-filter" class="icon-btn-primary"></i> Denemeleri Filtrele</h3>
+                <span class="close-modal-btn" id="closeExamFilterModalBtn">&times;</span>
+            </div>
+            <div class="modal-body" style="gap: 15px; overflow: visible !important;">
+                <div class="input-group">
+                    <label>Tarih Aralığı</label>
+                    <div class="task-custom-select" style="margin-bottom: 10px;">
+                        <div class="tcs-trigger"><span class="tcs-text">Tüm Zamanlar</span> <i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="tcs-options">
+                            <div class="tcs-option selected" data-value="all">Tüm Zamanlar</div>
+                            <div class="tcs-option" data-value="last30">Son 30 Gün</div>
+                            <div class="tcs-option" data-value="last90">Son 3 Ay</div>
+                            <div class="tcs-option" data-value="custom">Özel Tarih Aralığı Gir</div>
+                        </div>
+                        <input type="hidden" id="ef-datePreset" value="all">
+                    </div>
+                    <div id="ef-customDateGroup" style="display: none; gap: 10px;">
+                        <input type="date" id="ef-startDate" class="modal-input" class="flex-1">
+                        <input type="date" id="ef-endDate" class="modal-input" class="flex-1">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Net Filtresi (Hedef Ders veya Toplam)</label>
+                    <div class="task-custom-select" style="margin-bottom: 10px;">
+                        <div class="tcs-trigger"><span class="tcs-text" id="ef-subject-text">Genel (Toplam Net)</span> <i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="tcs-options" id="ef-subject-options">
+                            </div>
+                        <input type="hidden" id="ef-subject" value="total">
+                    </div>
+                    
+                    <div class="flex-gap-10">
+                        <div class="custom-number-input" class="flex-1">
+                            <input type="number" id="ef-minNet" class="modal-input no-spinner" placeholder="Min Net" step="0.25" style="transition: all 0.3s; padding-right: 65px;">
+                            <div class="cni-controls" style="right: 5px;">
+                                <button type="button" class="cni-btn" id="ef-minDown" style="width: 26px; height: 26px;"><i class="fa-solid fa-minus" style="font-size: 10px;"></i></button>
+                                <button type="button" class="cni-btn" id="ef-minUp" style="width: 26px; height: 26px;"><i class="fa-solid fa-plus" style="font-size: 10px;"></i></button>
+                            </div>
+                        </div>
+                        <div class="custom-number-input" class="flex-1">
+                            <input type="number" id="ef-maxNet" class="modal-input no-spinner" placeholder="Max Net" step="0.25" style="transition: all 0.3s; padding-right: 65px;">
+                            <div class="cni-controls" style="right: 5px;">
+                                <button type="button" class="cni-btn" id="ef-maxDown" style="width: 26px; height: 26px;"><i class="fa-solid fa-minus" style="font-size: 10px;"></i></button>
+                                <button type="button" class="cni-btn" id="ef-maxUp" style="width: 26px; height: 26px;"><i class="fa-solid fa-plus" style="font-size: 10px;"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="ef-netErrorText" style="color: var(--color-danger); font-size: 11px; font-weight: 800; margin-top: 5px; display: none;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> <span>Hata mesajı</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: space-between; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px;">
+                <button class="cancel-note-btn" id="clearExamFilterBtn" style="color: var(--color-danger); border-color: #ffc2c2;">Filtreleri Temizle</button>
+                <button class="save-note-btn" id="applyExamFilterBtn" style="background-color: var(--color-primary);">Uygula</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="examSortModal" class="custom-modal" style="z-index: 3500;">
+        <div class="custom-modal-content" style="max-width: 400px; overflow: visible !important; border-radius: 14px;">
+            <div class="modal-header" style="border-top-left-radius: 14px; border-top-right-radius: 14px;">
+                <h3><i class="fa-solid fa-arrow-down-a-z" class="icon-btn-primary"></i> Denemeleri Sırala</h3>
+                <span class="close-modal-btn" id="closeExamSortModalBtn">&times;</span>
+            </div>
+            <div class="modal-body" style="gap: 15px; overflow: visible !important;">
+                <div class="input-group">
+                    <label>Sıralama Kriteri</label>
+                    <div class="task-custom-select">
+                        <div class="tcs-trigger"><span class="tcs-text">Tarih (En Yeniden Eskiye)</span> <i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="tcs-options">
+                            <div class="tcs-option selected" data-value="date-desc">Tarih (En Yeniden Eskiye)</div>
+                            <div class="tcs-option" data-value="date-asc">Tarih (En Eskiden Yeniye)</div>
+                            <div class="tcs-option" data-value="net-desc">Net (Yüksekten Düşüğe)</div>
+                            <div class="tcs-option" data-value="net-asc">Net (Düşükten Yükseğe)</div>
+                        </div>
+                        <input type="hidden" id="es-criteria" value="date-desc">
+                    </div>
+                </div>
+                <div class="input-group" id="es-subjectGroup" style="display: none;">
+                    <label>Hangi Nete Göre Sıralansın?</label>
+                    <div class="task-custom-select">
+                        <div class="tcs-trigger"><span class="tcs-text" id="es-subject-text">Genel (Toplam Net)</span> <i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="tcs-options" id="es-subject-options">
+                            </div>
+                        <input type="hidden" id="es-subject" value="total">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-bottom-left-radius: 14px; border-bottom-right-radius: 14px;">
+                <button class="cancel-note-btn" id="cancelExamSortBtn">İptal</button>
+                <button class="save-note-btn" id="applyExamSortBtn" style="background-color: var(--color-primary);">Uygula</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="filterClearConfirmModal" class="custom-modal" style="z-index: 3600; display: none;">
+        <div class="custom-modal-content modal-centered">
+            
+            <i class="fa-solid fa-filter" style="font-size: 50px; color: #f39c12; margin-bottom: 20px; display: block;"></i>
+            
+            <h3 style="margin-bottom: 10px; color: var(--color-text-main); font-size: 20px;">Filtre Değişikliği Onayı</h3>
+            <p style="color: var(--color-text-muted); font-size: 14px; margin-bottom: 25px; line-height: 1.5;">Filtrelerde değişiklik yaptınız (veya sıfırladınız) ancak henüz uygulamadınız. Bu değişikliğin uygulanmasını onaylıyor musunuz?</p>
+            <div style="display: flex; justify-content: center; gap: 12px;">
+                <button class="cancel-note-btn" id="cancelFilterChangeBtn" style="padding: 10px 20px;">Vazgeç</button>
+                <button class="save-note-btn" id="yesFilterClearBtn" style="padding: 10px 20px; background-color: var(--color-primary);">Evet, Uygula</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="advancedSettingsModal" class="custom-modal" style="z-index: 3600;">
+        <div class="custom-modal-content" style="max-width: 500px; width: 90%; max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-gear" class="icon-btn-primary"></i> Gelişmiş Ayarlar</h3>
+                <span class="close-modal-btn" id="closeSettingsModalBtn">&times;</span>
+            </div>
+            <div class="modal-body" style="overflow-y: auto; padding: 20px;">
+                <div style="margin-bottom: 25px;">
+                    <h3 style="font-size: 14px; color: var(--color-text-main); margin-bottom: 12px; border-bottom: 2px solid #f0f0f0; padding-bottom: 5px;"><i class="fa-solid fa-trophy" style="color:#ffc107;"></i> Genel Hedefler</h3>
+                    <div style="display: flex; gap: 15px; margin-bottom: 10px;">
+                        <div style="flex: 1; background: var(--color-primary-lighter); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--color-primary-border);">
+                            <label style="font-size: 12px; font-weight: 800; color:var(--color-primary); display: block; margin-bottom: 5px;">TYT Hedefi</label>
+                            <div class="custom-number-input">
+                                <input type="number" id="targetTYT" class="modal-input no-spinner" placeholder="Örn: 90" step="1" style="padding-right: 65px;">
+                                <div class="cni-controls" style="right: 5px;">
+                                    <button type="button" class="cni-btn" id="targetTytDown" style="width: 26px; height: 26px;"><i class="fa-solid fa-minus" style="font-size: 10px;"></i></button>
+                                    <button type="button" class="cni-btn" id="targetTytUp" style="width: 26px; height: 26px;"><i class="fa-solid fa-plus" style="font-size: 10px;"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="flex: 1; background: var(--color-bg-card)8eb; padding: 12px; border-radius: var(--radius-md); border: 1px solid #ffeeba;">
+                            <label style="font-size: 12px; font-weight: 800; color:#b58900; display: block; margin-bottom: 5px;">AYT Hedefi</label>
+                            <div class="custom-number-input">
+                                <input type="number" id="targetAYT" class="modal-input no-spinner" placeholder="Örn: 60" step="1" style="padding-right: 65px;">
+                                <div class="cni-controls" style="right: 5px;">
+                                    <button type="button" class="cni-btn" id="targetAytDown" style="width: 26px; height: 26px;"><i class="fa-solid fa-minus" style="font-size: 10px;"></i></button>
+                                    <button type="button" class="cni-btn" id="targetAytUp" style="width: 26px; height: 26px;"><i class="fa-solid fa-plus" style="font-size: 10px;"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: flex-end; border-top: 1px solid #eef2f5;">
+                <button class="save-note-btn" id="saveSettingsBtn" style="background-color: var(--color-success); width: 100%; justify-content: center;"><i class="fa-solid fa-save"></i> Ayarları Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="plannerSettingsModal" class="custom-modal" style="z-index: 3600;">
+        <div class="custom-modal-content" style="max-width: 500px; width: 90%; max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-palette" class="icon-btn-primary"></i> Planlayıcı Ayarları</h3>
+                <span class="close-modal-btn" id="closePlannerSettingsBtn">&times;</span>
+            </div>
+            <div class="modal-body" style="overflow-y: auto; padding: 20px;">
+
+                <div class="settings-tab-segment">
+                    <input type="radio" name="settingsTab" id="tabSettingsColor" value="color" checked onchange="window.switchSettingsTab()">
+                    <label for="tabSettingsColor"><i class="fa-solid fa-palette" style="margin-right: 5px;"></i> Ders Renkleri</label>
+                    
+                    <input type="radio" name="settingsTab" id="tabSettingsView" value="view" onchange="window.switchSettingsTab()">
+                    <label for="tabSettingsView"><i class="fa-solid fa-display" style="margin-right: 5px;"></i> Görüntü</label>
+                </div>
+
+                <div id="settingsColorContent" style="display: block;">
+                    <p style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 15px;">Görev kartlarında derslerin yanındaki şeritlerin rengini buradan değiştirebilirsin.</p>
+                    
+                    <div class="segmented-control">
+                        <input type="radio" id="colorExamTyt" name="colorExamType" value="TYT" checked>
+                        <label for="colorExamTyt">TYT</label>
+                        
+                        <input type="radio" id="colorExamAyt" name="colorExamType" value="AYT">
+                        <label for="colorExamAyt">AYT</label>
+                    </div>
+
+                    <div id="colorAytFieldContainer">
+                        <input type="radio" id="colorAytSay" name="colorAytField" value="sayisal" checked>
+                        <label for="colorAytSay">Sayısal</label>
+                        
+                        <input type="radio" id="colorAytEa" name="colorAytField" value="ea">
+                        <label for="colorAytEa">Eşit Ağırlık</label>
+                        
+                        <input type="radio" id="colorAytSoz" name="colorAytField" value="sozel">
+                        <label for="colorAytSoz">Sözel</label>
+                        
+                        <input type="radio" id="colorAytDil" name="colorAytField" value="dil">
+                        <label for="colorAytDil">Dil</label>
+                    </div>
+
+                    <div id="subjectColorsContainer" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        </div>
+                </div>
+
+                <div id="settingsViewContent" style="display: none;">
+                    <p style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 15px;">Planlayıcının görünüm ve tasarım ayarlarını buradan yönetebilirsin.</p>
+                    
+                    <div style="background: var(--color-primary-lighter); border: 1px solid var(--color-primary-border); border-radius: var(--radius-md); padding: 15px; margin-bottom: 15px;">
+                        <h4 style="color: var(--color-primary); font-size: 14px; margin-top: 0; margin-bottom: 8px;"><i class="fa-solid fa-layer-group" style="margin-right: 5px;"></i> Planlayıcı Düzeni</h4>
+                        <p style="font-size: 11px; color: var(--color-text-muted); margin-bottom: 12px;">Haftalık planlayıcıda günlerin ve görevlerin nasıl listeleneceğini seç.</p>
+                        
+                        <div class="layout-segment">
+                            <input type="radio" name="settingLayout" id="layoutCol" value="column" checked onchange="window.hasUnsavedColorChanges = true;">
+                            <label for="layoutCol"><i class="fa-solid fa-table-columns" style="margin-right: 4px;"></i> Sütun (Dikey)</label>
+                            
+                            <input type="radio" name="settingLayout" id="layoutRow" value="row" onchange="window.hasUnsavedColorChanges = true;">
+                            <label for="layoutRow"><i class="fa-solid fa-table-list" style="margin-right: 4px;"></i> Satır (Yatay)</label>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--color-primary-lighter); border: 1px solid var(--color-primary-border); border-radius: var(--radius-md); padding: 15px; margin-top: 15px;">
+                        <h4 style="color: var(--color-primary); font-size: 14px; margin-top: 0; margin-bottom: 8px;">
+                            <i class="fa-solid fa-check-double" style="margin-right: 5px;"></i> Tamamlanma Sembolü
+                        </h4>
+                        <p style="font-size: 11px; color: var(--color-text-muted); margin-bottom: 12px;">Görev tamamlandığında görünecek olan onay işaretini seç.</p>
+                        
+                        <div id="iconOptions" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                            
+                            <label class="settings-icon-option active" data-icon-value="'\f00c'">
+                                <input type="radio" name="iconChoice" value="'\f00c'" style="display:none;" checked>
+                                <i class="fa-solid fa-check"></i>
+                            </label>
+                            
+                            <label class="settings-icon-option" data-icon-value="'\f058'">
+                                <input type="radio" name="iconChoice" value="'\f058'" style="display:none;">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </label>
+                            
+                            <label class="settings-icon-option" data-icon-value="'\f14a'">
+                                <input type="radio" name="iconChoice" value="'\f14a'" style="display:none;">
+                                <i class="fa-solid fa-square-check"></i>
+                            </label>
+                            
+                            <label class="settings-icon-option" data-icon-value="'\f560'">
+                                <input type="radio" name="iconChoice" value="'\f560'" style="display:none;">
+                                <i class="fa-solid fa-check-double"></i>
+                            </label>
+
+                            <label class="settings-icon-option" data-icon-value="'\f005'">
+                                <input type="radio" name="iconChoice" value="'\f005'" style="display:none;">
+                                <i class="fa-solid fa-star"></i>
+                            </label>
+
+                            <label class="settings-icon-option" data-icon-value="'\f091'">
+                                <input type="radio" name="iconChoice" value="'\f091'" style="display:none;">
+                                <i class="fa-solid fa-trophy"></i>
+                            </label>
+
+                            <label class="settings-icon-option" data-icon-value="'\f135'">
+                                <input type="radio" name="iconChoice" value="'\f135'" style="display:none;">
+                                <i class="fa-solid fa-rocket"></i>
+                            </label>
+
+                            <label class="settings-icon-option" data-icon-value="'\f164'">
+                                <input type="radio" name="iconChoice" value="'\f164'" style="display:none;">
+                                <i class="fa-solid fa-thumbs-up"></i>
+                            </label>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: flex-end; border-top: 1px solid #eef2f5;">
+                <button class="save-note-btn" id="savePlannerSettingsBtn" style="background-color: var(--color-success); width: 100%; justify-content: center;"><i class="fa-solid fa-save"></i> Ayarları Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         TEMA YÖNETİM SİSTEMİ
+         Kullanım: setTheme('dark') / setTheme('default')
+         Yeni tema: :root [data-theme="isim"] bloğu ekle, burada kaydet.
+         ============================================================ -->
+    <script src="theme.js"></script>
+
